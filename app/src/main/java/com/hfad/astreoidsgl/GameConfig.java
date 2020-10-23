@@ -8,6 +8,8 @@ public class GameConfig {
     public static int HURT = 0;
     public static int START_GAME = 0;
     public static int PICKUP_COIN = 0;
+    public static int LASER = 0;
+    public static int EXPLOSION = 0;
     public static int GAME_OVER = 0;
     public static final int MAX_STREAMS = 3;
     public static final int BG_VOLUME_LEFT = 100;

@@ -22,6 +22,10 @@ public class Asteroid extends GLEntity {
         _mesh.setWidthHeight(_width, _height);
     }
 
+    public static void onHitLaser() {
+        _game._jukebox.play(GameConfig.EXPLOSION);
+    }
+
     @Override
     public void update(double dt) {
         _rotation++;

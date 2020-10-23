@@ -48,6 +48,7 @@ public class Player extends GLEntity {
         if(_game._inputs._pressingA && _bulletCooldown <= 0){
             setColors(1, 0, 1, 1);
             if(_game.maybeFireBullet(this)){
+                _game._jukebox.play(GameConfig.LASER);
                 _bulletCooldown = TIME_BETWEEN_SHOTS;
             }
         }else{
@@ -78,4 +79,7 @@ public class Player extends GLEntity {
         return CollisionDetection.polygonVsPoint(asteroidHull, _x, _y); //finally, check if we're inside the asteroid
     }
 
+    public void onHitAsteroid() {
+        _game._jukebox.play(GameConfig.HURT);
+    }
 }

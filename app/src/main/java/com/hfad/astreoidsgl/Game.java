@@ -6,8 +6,12 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 
+import com.hfad.astreoidsgl.audio.BackgroundMusic;
+import com.hfad.astreoidsgl.audio.Jukebox;
 import com.hfad.astreoidsgl.input.InputManager;
 import com.hfad.astreoidsgl.shapes.Square;
 import com.hfad.astreoidsgl.shapes.Triangle;
@@ -22,8 +26,11 @@ import javax.microedition.khronos.opengles.GL10;
 public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
 
+    private static final String TAG = "";
     private Border _border;
     private Player _player = null;
+    public Jukebox _jukebox = null;
+    private BackgroundMusic _backgroundMusic = null;
 
     GameConfig _config = new GameConfig();
     public InputManager _inputs = new InputManager(); //empty but valid default
@@ -80,6 +87,9 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         setEGLContextClientVersion(2); //select OpenGL ES 2.0
         setPreserveEGLContextOnPause(true); //context *may* be preserved and thus *may* avoid slow reloads when switching apps.
         // we always re-create the OpenGL context in onSurfaceCreated, so we're safe either way.
+        _jukebox = new Jukebox(getContext());
+        _backgroundMusic = new BackgroundMusic(getContext());
+       // _backgroundMusic.loadBackgroundMusic(R.raw.background_music);
 
         final String s1 = "HELLO WORLD";
         final String s2 = "0123456789";
@@ -97,44 +107,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         setRenderer(this);
     }
 
-    /*
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-        // MotionEvent reports input details from the touch screen
-        // and other input controls. In this case, you are only
-        // interested in events where the touch position changed.
 
-        float x = e.getX();
-        float y = e.getY();
-
-        switch (e.getAction()) {
-            case MotionEvent.ACTION_MOVE:
-
-                float dx = x - previousX;
-                float dy = y - previousY;
-
-                // reverse direction of rotation above the mid-line
-                if (y > getHeight() / 2) {
-                    dx = dx * -1 ;
-                }
-
-                // reverse direction of rotation to left of the mid-line
-                if (x < getWidth() / 2) {
-                    dy = dy * -1 ;
-                }
-
-                this.setAngle(
-                        this.getAngle() +
-                                ((dx + dy) * TOUCH_SCALE_FACTOR));
-                requestRender();
-        }
-
-        previousX = x;
-        previousY = y;
-        return true;
-    }
-
-     */
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         GLManager.buildProgram(); //compile, link and upload our GL program
@@ -143,6 +116,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         _player = new Player(WORLD_WIDTH/2, 10); //y == 10
         // spawn Border at the center of the world now!
         _border = new Border(WORLD_WIDTH/2, WORLD_HEIGHT/2, WORLD_WIDTH, WORLD_HEIGHT);
+        _jukebox.play(GameConfig.START_GAME);
 
 
         Random r = new Random();
@@ -162,6 +136,12 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         // Set the OpenGL viewport to the same size as the surface.
         GLES20.glViewport(0, 0, width, height);
+    }
+
+    @Override
+    public void surfaceDestroyed(final SurfaceHolder holder) {
+        Log.d(TAG, "surfaceDestroyed!");
+
     }
 
     @Override
@@ -272,6 +252,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
             if(b.isDead()){ continue; } //skip dead bullets
             for(final Asteroid a : _asteroids) {
                 if(b.isColliding(a)){
+                    Asteroid.onHitLaser();
                     if(a.isDead()){continue;}
                     b.onCollision(a); //notify each entity so they can decide what to do
                     a.onCollision(b);
@@ -282,6 +263,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
             if(a.isDead()){continue;}
             if(_player.isColliding(a)){
                 _player.onCollision(a);
+                _player.onHitAsteroid();
                 a.onCollision(_player);
             }
         }
