@@ -18,10 +18,10 @@ import java.util.Random;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+import java.text.DecimalFormat;
 
 
 public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
-
 
     private static final String TAG = "";
     private Border _border;
@@ -47,7 +47,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     //private static final float BG_COLOR[] = {135/255f, 206/255f, 235/255f, 1f}; //RGBA
     private static final float BG_COLOR[] = {0/255f, 0/255f, 0/255f, 1f}; //RGBA
 
-
+    private static DecimalFormat df = new DecimalFormat("0");
     public static long SECOND_IN_NANOSECONDS = 1000000000;
     public static long MILLISECOND_IN_NANOSECONDS = 1000000;
     public static float NANOSECONDS_TO_MILLISECONDS = 1.0f / MILLISECOND_IN_NANOSECONDS;
@@ -91,27 +91,8 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         _backgroundMusic = new BackgroundMusic(getContext());
         _backgroundMusic.loadBackgroundMusic(R.raw.background_music); //todo: turn on bg music
 
-        //final String s1 = "Lives " + GameConfig._health;
-        /*
-        String s1 = String.format(getResources().getString(R.string.playerHealth), GameConfig._health);
-        final String s2 = String.format(getResources().getString(R.string.score), GameConfig._score);
-
-        _texts.add(new Text(s1, 8, 8));
-        _texts.add(new Text(s2, 8, 16));
-
-
-         */
         _hud = new HUD(this.getContext(), _player);
-        //final String s2 = "Score " + GameConfig._score;
-        final String s3 = ", - . : = ? [ ~" ;
-        final String s4 = "ABCDEFGHIJKLMNOPQRSTUVXYZ" ;
 
-        /*
-        _texts.add(new Text(s2, 8, 16));
-        _texts.add(new Text(s3, 8, 24));
-        _texts.add(new Text(s4, 8, 32));
-
-         */
 
         for(int i = 0; i < BULLET_COUNT; i++){
             _bullets[i] = new Bullet();
@@ -119,6 +100,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
         setRenderer(this);
     }
+
 
 
     @Override
@@ -146,6 +128,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
     }
 
+
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         // Set the OpenGL viewport to the same size as the surface.
@@ -161,20 +144,38 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(final GL10 unused) {
         update(); //TODO: move updates away from the render thread...
+
+        final double newTime = System.nanoTime() * NANOSECONDS_TO_SECONDS;
+        //final double frameTime = newTime - currentTime;
+        currentTime = newTime;
+        nbFrames++;
         render();
+        if ( newTime - lastTime >= 1.0 ){
+            FPS = df.format(1000.0/((double)nbFrames)); //what is this?
+            nbFrames =0;
+            lastTime +=1;
+
+        }
     }
     //trying a fixed time-step with accumulator, courtesy of
 //   https://gafferongames.com/post/fix_your_timestep/
+    private String FPS = "";
+    double lastTime = System.nanoTime() * NANOSECONDS_TO_SECONDS;
+    int nbFrames = 0;
+
+    public String getFPS() {
+        return FPS;
+    }
 
     private void update() {
         final double newTime = System.nanoTime() * NANOSECONDS_TO_SECONDS;
         final double frameTime = newTime - currentTime;
         currentTime = newTime;
+
         accumulator += frameTime;
         while(accumulator >= dt){
             for(final Asteroid a : _asteroids){
                 a.update(dt);
-
             }
             for(final Bullet b : _bullets){
                 if(b.isDead()){ continue; } //skip
@@ -209,13 +210,6 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         for(final Asteroid a : _asteroids){
             a.render(_viewportMatrix);
 
-           // _hud.textFetch(this);
-            /*
-            for(final Text t : _texts){
-                t.render(_viewportMatrix);
-            }
-
-             */
             for(final Bullet b : _bullets){
                 if(b.isDead()){ continue; } //skip
                 b.render(_viewportMatrix);

@@ -22,6 +22,7 @@ public class HUD extends SurfaceView {
     String _textHealth = String.format(getResources().getString(R.string.playerHealth), GameConfig._health);
     String _textScore = String.format(getResources().getString(R.string.score), GameConfig._score);
     String _textLevel = "Level 1";
+    String fps = "";
 
 
 
@@ -35,6 +36,7 @@ public class HUD extends SurfaceView {
         _texts.add(0, new Text(_textHealth, 8, 8));
         _texts.add(1, new Text(_textScore, 8, 16));
         _texts.add(2, new Text(_textLevel, 8, 24));
+        _texts.add(3, new Text(fps, 8, 32));
 
     }
 
@@ -53,6 +55,8 @@ public class HUD extends SurfaceView {
             _texts.set(1,new Text(_textScore, 8, 16));
             _laserHitAsteroid = false;
         }
+        fps = game.getFPS();
+        _texts.set(3, new Text("MS" + fps, 8, 32));
 
         for(final Text t : _texts){
             t.render(game._viewportMatrix);
