@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AstreoidsGL</string>
+    <string name="playerHealth">Health: %d </string>
+    <string name="score">Score: %d </string>
 </resources>

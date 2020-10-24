@@ -2,28 +2,36 @@ package com.hfad.astreoidsgl;
 
 import android.graphics.PointF;
 import android.opengl.GLES20;
-import android.os.SystemClock;
 
-import com.hfad.astreoidsgl.shapes.Triangle;
+import com.hfad.astreoidsgl.audio.Jukebox;
+
+import java.util.Random;
 
 import static com.hfad.astreoidsgl.CollisionDetection.areBoundingSpheresOverlapping;
+
 
 
 public class Player extends GLEntity {
 
     private static final String TAG = "Player";
     static final float ROTATION_VELOCITY = 360f; //TODO: game play values!
-    static final float THRUST = 8f;
+    static final float THRUST = 40f;
     static final float DRAG = 0.99f;
     public static final float TIME_BETWEEN_SHOTS = 0.25f; //seconds. TODO: game play setting!
     private float _bulletCooldown = 0;
+    public static final float TIME_BETWEEN_HYPERSPACE = 0.75f; //seconds. TODO: game play setting!
+    private float _hyperspaceCooldown = 0;
+    public static final float TIME_BETWEEN_BOOST = 0.75f; //seconds. TODO: game play setting!
+    private float _boostCooldown = 0;
+    Random r = new Random();
+
 
     public Player(final float x, final float y){
         super();
         _x = x;
         _y = y;
-        _width = 8f; //TODO: gameplay values!
-        _height = 12f;
+        _width = 4f; //TODO: gameplay values!
+        _height = 8f;
         float vertices[] = { // in counterclockwise order:
                 0.0f,  0.5f, 0.0f, 	// top
                 -0.5f, -0.5f, 0.0f,	// bottom left
@@ -37,11 +45,24 @@ public class Player extends GLEntity {
     @Override
     public void update(double dt){
         _rotation += (dt*ROTATION_VELOCITY) * _game._inputs._horizontalFactor;
-        if(_game._inputs._pressingB){
+        _boostCooldown -= dt;
+        if(_game._inputs._pressingB && _boostCooldown <= 0){
             final float theta = _rotation*(float)Utils.TO_RAD;
             _velX += (float)Math.sin(theta) * THRUST;
             _velY -= (float)Math.cos(theta) * THRUST;
+            _game._jukebox.play(GameConfig.BOOST); //todo; fps drop, implement cooldown?
+            _boostCooldown = TIME_BETWEEN_BOOST;
         }
+
+        _hyperspaceCooldown -= dt;
+        if(_game._inputs._pressingHyperspace && _hyperspaceCooldown <=0){
+            _game._jukebox.play(GameConfig.HYPERSPACE);
+            _y = r.nextInt((int) GameConfig.WORLD_HEIGHT);
+            _x = r.nextInt((int) GameConfig.WORLD_WIDTH);
+            _hyperspaceCooldown = TIME_BETWEEN_HYPERSPACE;
+        }
+
+
         _velX *= DRAG;
         _velY *= DRAG;
         _bulletCooldown -= dt;
@@ -80,6 +101,11 @@ public class Player extends GLEntity {
     }
 
     public void onHitAsteroid() {
+        HUD._playerIsHit = true;
         _game._jukebox.play(GameConfig.HURT);
+        GameConfig._health--;
+        //_playerIsHit = false;
+
+
     }
 }

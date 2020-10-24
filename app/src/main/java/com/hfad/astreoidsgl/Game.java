@@ -7,14 +7,11 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
 import com.hfad.astreoidsgl.audio.BackgroundMusic;
 import com.hfad.astreoidsgl.audio.Jukebox;
 import com.hfad.astreoidsgl.input.InputManager;
-import com.hfad.astreoidsgl.shapes.Square;
-import com.hfad.astreoidsgl.shapes.Triangle;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -28,9 +25,12 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
     private static final String TAG = "";
     private Border _border;
-    private Player _player = null;
+    protected Player _player = null;
+    protected Asteroid _asteroid = null;
     public Jukebox _jukebox = null;
+    private HUD _hud = null;
     private BackgroundMusic _backgroundMusic = null;
+   // protected ArrayList<Text> _texts = new ArrayList<>();
 
     GameConfig _config = new GameConfig();
     public InputManager _inputs = new InputManager(); //empty but valid default
@@ -42,9 +42,11 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     private static int ASTEROID_COUNT = 10;
     private ArrayList<Star> _stars= new ArrayList();
     private ArrayList<Asteroid> _asteroids = new ArrayList();
-    private ArrayList<Text> _texts = new ArrayList<>();
 
-    private static final float BG_COLOR[] = {135/255f, 206/255f, 235/255f, 1f}; //RGBA
+
+    //private static final float BG_COLOR[] = {135/255f, 206/255f, 235/255f, 1f}; //RGBA
+    private static final float BG_COLOR[] = {0/255f, 0/255f, 0/255f, 1f}; //RGBA
+
 
     public static long SECOND_IN_NANOSECONDS = 1000000000;
     public static long MILLISECOND_IN_NANOSECONDS = 1000000;
@@ -55,13 +57,11 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     double accumulator = 0.0;
     double currentTime = System.nanoTime()*NANOSECONDS_TO_SECONDS;
 
-    public static float WORLD_WIDTH = 160; //80x80 - much smaller than the viewport.
-    public static float WORLD_HEIGHT = 90;
-    static float METERS_TO_SHOW_X = WORLD_WIDTH; //160m x 90m, the entire game world in view
-    static float METERS_TO_SHOW_Y = WORLD_HEIGHT; //TODO: calculate to match screen aspect ratio
+    static float METERS_TO_SHOW_X = GameConfig.WORLD_WIDTH; //160m x 90m, the entire game world in view
+    static float METERS_TO_SHOW_Y = GameConfig.WORLD_HEIGHT; //TODO: calculate to match screen aspect ratio
 
     // Create the projection Matrix. This is used to project the scene onto a 2D viewport.
-    private float[] _viewportMatrix = new float[4*4]; //In essence, it is our our Camera
+    protected float[] _viewportMatrix = new float[4*4]; //In essence, it is our our Camera
 
     public volatile float mAngle;
 
@@ -89,16 +89,29 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         // we always re-create the OpenGL context in onSurfaceCreated, so we're safe either way.
         _jukebox = new Jukebox(getContext());
         _backgroundMusic = new BackgroundMusic(getContext());
-       // _backgroundMusic.loadBackgroundMusic(R.raw.background_music);
+        _backgroundMusic.loadBackgroundMusic(R.raw.background_music); //todo: turn on bg music
 
-        final String s1 = "HELLO WORLD";
-        final String s2 = "0123456789";
+        //final String s1 = "Lives " + GameConfig._health;
+        /*
+        String s1 = String.format(getResources().getString(R.string.playerHealth), GameConfig._health);
+        final String s2 = String.format(getResources().getString(R.string.score), GameConfig._score);
+
+        _texts.add(new Text(s1, 8, 8));
+        _texts.add(new Text(s2, 8, 16));
+
+
+         */
+        _hud = new HUD(this.getContext(), _player);
+        //final String s2 = "Score " + GameConfig._score;
         final String s3 = ", - . : = ? [ ~" ;
         final String s4 = "ABCDEFGHIJKLMNOPQRSTUVXYZ" ;
-        _texts.add(new Text(s1, 8, 8));
+
+        /*
         _texts.add(new Text(s2, 8, 16));
         _texts.add(new Text(s3, 8, 24));
         _texts.add(new Text(s4, 8, 32));
+
+         */
 
         for(int i = 0; i < BULLET_COUNT; i++){
             _bullets[i] = new Bullet();
@@ -111,22 +124,23 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         GLManager.buildProgram(); //compile, link and upload our GL program
+        //GLES20.glClearColor(BG_COLOR[0], BG_COLOR[1], BG_COLOR[2], BG_COLOR[3]); //set clear color
         GLES20.glClearColor(BG_COLOR[0], BG_COLOR[1], BG_COLOR[2], BG_COLOR[3]); //set clear color
         // center the player in the world.
-        _player = new Player(WORLD_WIDTH/2, 10); //y == 10
+        _player = new Player(GameConfig.WORLD_WIDTH/2, 10); //y == 10
         // spawn Border at the center of the world now!
-        _border = new Border(WORLD_WIDTH/2, WORLD_HEIGHT/2, WORLD_WIDTH, WORLD_HEIGHT);
+        _border = new Border(GameConfig.WORLD_WIDTH/2, GameConfig.WORLD_HEIGHT/2, GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT);
         _jukebox.play(GameConfig.START_GAME);
 
 
-        Random r = new Random();
+         Random r = new Random();
         for(int i = 0; i < STAR_COUNT; i++){
-            _stars.add(new Star(r.nextInt((int)WORLD_WIDTH), r.nextInt((int)WORLD_HEIGHT)));
+            _stars.add(new Star(r.nextInt((int) GameConfig.WORLD_WIDTH), r.nextInt((int) GameConfig.WORLD_HEIGHT)));
         }
         final int minAsteroid = 11;
         final int maxAsteroid = 13;
         for(int i = 0; i < ASTEROID_COUNT; i++){
-            _asteroids.add(new Asteroid(r.nextInt((int)WORLD_WIDTH),  r.nextInt((int)WORLD_HEIGHT), r.nextInt((maxAsteroid - minAsteroid) + 1) + minAsteroid));
+            _asteroids.add(new Asteroid(r.nextInt((int) GameConfig.WORLD_WIDTH),  r.nextInt((int) GameConfig.WORLD_HEIGHT), r.nextInt((maxAsteroid - minAsteroid) + 1) + minAsteroid));
         }
 
 
@@ -195,9 +209,13 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         for(final Asteroid a : _asteroids){
             a.render(_viewportMatrix);
 
+           // _hud.textFetch(this);
+            /*
             for(final Text t : _texts){
                 t.render(_viewportMatrix);
             }
+
+             */
             for(final Bullet b : _bullets){
                 if(b.isDead()){ continue; } //skip
                 b.render(_viewportMatrix);
@@ -208,8 +226,9 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
             s.render(_viewportMatrix);
         }
         _player.render(_viewportMatrix);
-    }
+        _hud.renderHUD(this);
 
+    }
 
 
     public static int loadShader(int type, String shaderCode){
@@ -252,10 +271,11 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
             if(b.isDead()){ continue; } //skip dead bullets
             for(final Asteroid a : _asteroids) {
                 if(b.isColliding(a)){
-                    Asteroid.onHitLaser();
+                   a.onHitLaser();
                     if(a.isDead()){continue;}
                     b.onCollision(a); //notify each entity so they can decide what to do
                     a.onCollision(b);
+                    b._ttl = 0; //kill bullet if colliding with asteroid
                 }
             }
         }

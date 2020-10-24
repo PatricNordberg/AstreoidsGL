@@ -1,12 +1,10 @@
 package com.hfad.astreoidsgl;
 import android.opengl.GLES20;
 
-import com.hfad.astreoidsgl.GLEntity;
-import com.hfad.astreoidsgl.Mesh;
-
 public class Asteroid extends GLEntity {
     private static final float MAX_VEL = 14f;
     private static final float MIN_VEL = -14f;
+
     public Asteroid(final float x, final float y, int points){
         if(points < 3){ points = 3; } //triangles or more, please. :)
         _x = x;
@@ -22,8 +20,11 @@ public class Asteroid extends GLEntity {
         _mesh.setWidthHeight(_width, _height);
     }
 
-    public static void onHitLaser() {
+    public void onHitLaser() {
+        HUD._laserHitAsteroid = true;
         _game._jukebox.play(GameConfig.EXPLOSION);
+        GameConfig._score++;
+
     }
 
     @Override

@@ -11,6 +11,7 @@ public class TouchController extends InputManager implements View.OnTouchListene
         view.findViewById(R.id.keypad_right).setOnTouchListener(this);
         view.findViewById(R.id.keypad_a).setOnTouchListener(this);
         view.findViewById(R.id.keypad_b).setOnTouchListener(this);
+        view.findViewById(R.id.keypad_hyperspace).setOnTouchListener(this);
     }
 
     @Override
@@ -30,6 +31,9 @@ public class TouchController extends InputManager implements View.OnTouchListene
             if (id == R.id.keypad_b) {
                 _pressingB = true;
             }
+            if (id == R.id.keypad_hyperspace) {
+                _pressingHyperspace = true;
+            }
         } else if(action == MotionEvent.ACTION_UP) {
             // User released a key
             if (id == R.id.keypad_left) {
@@ -42,6 +46,9 @@ public class TouchController extends InputManager implements View.OnTouchListene
             }
             if (id == R.id.keypad_b) {
                 _pressingB = false;
+            }
+            if (id == R.id.keypad_hyperspace) {
+                _pressingHyperspace = false;
             }
         }
         return false;

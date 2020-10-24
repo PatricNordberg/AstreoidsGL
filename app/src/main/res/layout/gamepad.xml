@@ -11,7 +11,7 @@
         android:layout_width="@dimen/keypad_size"
         android:layout_height="@dimen/keypad_size"
         android:layout_alignParentStart="true"
-        android:background="@drawable/arrow_left" />
+        android:background="@drawable/ic_left_arrow_arrows_svgrepo_com" />
 
     <Button
         android:id="@+id/keypad_right"
@@ -19,20 +19,30 @@
         android:layout_height="@dimen/keypad_size"
         android:layout_marginStart="48dp"
         android:layout_toEndOf="@+id/keypad_left"
-        android:background="@drawable/arrow_right" />
+        android:background="@drawable/ic_right_arrow_next_svgrepo_com" />
 
     <Button
         android:id="@+id/keypad_b"
-        android:layout_width="@dimen/keypad_size"
-        android:layout_height="@dimen/keypad_size"
+        android:layout_width="52dp"
+        android:layout_height="61dp"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/add_circle" />
+        android:layout_marginEnd="44dp"
+        android:background="@drawable/ic_rocket_red" />
 
     <Button
         android:id="@+id/keypad_a"
+        android:layout_width="78dp"
+        android:layout_height="56dp"
+        android:layout_marginEnd="40dp"
+        android:layout_toStartOf="@+id/keypad_b"
+        android:background="@drawable/ic_laser_purple" />
+
+    <Button
+        android:id="@+id/keypad_hyperspace"
         android:layout_width="@dimen/keypad_size"
         android:layout_height="@dimen/keypad_size"
+        android:layout_centerVertical="true"
         android:layout_marginEnd="48dp"
-        android:layout_toStartOf="@+id/keypad_b"
-        android:background="@drawable/remove_circle" />
+        android:layout_toStartOf="@+id/keypad_a"
+        android:background="@drawable/ic_dice" />
 </RelativeLayout>

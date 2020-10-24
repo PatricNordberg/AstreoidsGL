@@ -3,8 +3,6 @@ package com.hfad.astreoidsgl;
 import android.graphics.PointF;
 import android.opengl.Matrix;
 
-import org.w3c.dom.Entity;
-
 import java.util.Objects;
 
 public class GLEntity {
@@ -99,15 +97,15 @@ public class GLEntity {
         _x += _velX * dt;
         _y += _velY * dt;
 
-        if(left() > Game.WORLD_WIDTH){
+        if(left() > GameConfig.WORLD_WIDTH){
             setRight(0);
         }else if(right() < 0){
-            setLeft(Game.WORLD_WIDTH);
+            setLeft(GameConfig.WORLD_WIDTH);
         }
-        if(top() > Game.WORLD_HEIGHT){
+        if(top() > GameConfig.WORLD_HEIGHT){
             setBottom(0);
         }else if(bottom() < 0){
-            setTop(Game.WORLD_HEIGHT);
+            setTop(GameConfig.WORLD_HEIGHT);
         }
         //red under half world
         /*

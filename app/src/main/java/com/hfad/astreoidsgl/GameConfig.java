@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 public class GameConfig {
 
+
     //Jukebox
     public static int HURT = 0;
     public static int START_GAME = 0;
@@ -11,6 +12,8 @@ public class GameConfig {
     public static int LASER = 0;
     public static int EXPLOSION = 0;
     public static int GAME_OVER = 0;
+    public static int BOOST = 0;
+    public static int HYPERSPACE = 0;
     public static final int MAX_STREAMS = 3;
     public static final int BG_VOLUME_LEFT = 100;
     public static final int BG_VOLUME_RIGHT = 100;
@@ -24,4 +27,10 @@ public class GameConfig {
     public static final float METERS_TO_SHOW_X = 16f;
     public static final float METERS_TO_SHOW_Y = 0f;//0 for calculate this for us
 
+    //Player
+    public static int _health = 3;
+    public static int _score = 0;
+
+    public static float WORLD_WIDTH = 160; //80x80 - much smaller than the viewport.
+    public static float WORLD_HEIGHT = 90;
 }

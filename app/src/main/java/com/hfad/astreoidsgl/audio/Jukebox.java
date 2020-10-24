@@ -48,6 +48,10 @@ public class Jukebox {
             GameConfig.LASER = _soundPool.load(descriptor, 1);
             descriptor = assetManager.openFd("explosion.wav");
             GameConfig.EXPLOSION = _soundPool.load(descriptor, 1);
+            descriptor = assetManager.openFd("boost.wav");
+            GameConfig.BOOST = _soundPool.load(descriptor, 1);
+            descriptor = assetManager.openFd("hyperspace.wav");
+            GameConfig.HYPERSPACE = _soundPool.load(descriptor, 1);
         } catch (IOException e) {
             e.printStackTrace();
         }
