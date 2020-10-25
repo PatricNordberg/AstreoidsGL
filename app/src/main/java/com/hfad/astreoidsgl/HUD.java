@@ -52,7 +52,7 @@ public class HUD extends SurfaceView {
             _texts.set(1, new Text(_textScore, 8, 16));
             _laserHitAsteroid = false;
         }
-        _fps = game._fpsCounter.getFPS();
+        _fps = game._fpsCounter.get_fps();
         _texts.set(3, new Text("FPS" + _fps, 8, 32));
 
         for (final Text t : _texts) {
