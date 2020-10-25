@@ -55,9 +55,6 @@ public class Asteroid extends GLEntity {
         }
 
 
-
-
-
     private void largeAstroid() {
         _width = 12;
         _height = _width;
@@ -95,8 +92,6 @@ public class Asteroid extends GLEntity {
         if (a._width == 4){
             GameConfig._score+=3;
         }
-
-
 
     }
 

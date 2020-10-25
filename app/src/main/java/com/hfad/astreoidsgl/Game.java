@@ -27,6 +27,7 @@ import java.text.DecimalFormat;
 
 
 public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
+    int levelNumber = 1;
 
     private static final String TAG = "";
     private Border _border;
@@ -45,8 +46,10 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     Bullet[] _bullets = new Bullet[BULLET_COUNT];
     private static int STAR_COUNT = 100;
     public static int ASTEROID_COUNT = 10;
+    public static int SMALL_ASTEROID_COUNT = 12;
     private ArrayList<Star> _stars= new ArrayList();
     public ArrayList<Asteroid> _asteroids = new ArrayList();
+    public ArrayList<Asteroid> _smallAsteroids = new ArrayList();
 
 
     //private static final float BG_COLOR[] = {135/255f, 206/255f, 235/255f, 1f}; //RGBA
@@ -115,7 +118,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         //GLES20.glClearColor(BG_COLOR[0], BG_COLOR[1], BG_COLOR[2], BG_COLOR[3]); //set clear color
         GLES20.glClearColor(BG_COLOR[0], BG_COLOR[1], BG_COLOR[2], BG_COLOR[3]); //set clear color
         // center the player in the world.
-        _player = new Player(GameConfig.WORLD_WIDTH/2, 10); //y == 10
+        _player = new Player(GameConfig.WORLD_WIDTH/2, GameConfig.WORLD_HEIGHT/2); //y == 10
         // spawn Border at the center of the world now!
         _border = new Border(GameConfig.WORLD_WIDTH/2, GameConfig.WORLD_HEIGHT/2, GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT);
         _jukebox.play(GameConfig.START_GAME);
@@ -130,6 +133,8 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         for(int i = 0; i < ASTEROID_COUNT; i++){
             try {
                 _asteroids.add(new Asteroid(r.nextInt((int) GameConfig.WORLD_WIDTH),  r.nextInt((int) GameConfig.WORLD_HEIGHT), r.nextInt((maxAsteroid - minAsteroid) + 1) + minAsteroid));
+                // Avoid the center where the player spawns
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -178,6 +183,9 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
                 if(b.isDead()){ continue; } //skip
                 b.update(dt);
             }
+            for(final Star s : _stars){
+                s.update(dt);
+            }
             _player.update(dt);
 
             collisionDetection();
@@ -213,7 +221,9 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         }
 
         for(final Star s : _stars){
-            s.render(_viewportMatrix);
+            if(s._showIt) {
+                s.render(_viewportMatrix);
+            }
         }
         _player.render(_viewportMatrix);
         _hud.renderHUD(this);
