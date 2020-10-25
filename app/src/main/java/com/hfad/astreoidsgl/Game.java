@@ -68,6 +68,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
     private float previousX;
     private float previousY;
+    FPSCounter _fpsCounter = null;
 
     //private MyGLRenderer _renderer = null;
 
@@ -83,6 +84,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
 
     private void init(){
+        _fpsCounter = new FPSCounter();
         GLEntity._game = this;
         setEGLContextClientVersion(2); //select OpenGL ES 2.0
         setPreserveEGLContextOnPause(true); //context *may* be preserved and thus *may* avoid slow reloads when switching apps.
@@ -92,7 +94,6 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         _backgroundMusic.loadBackgroundMusic(R.raw.background_music); //todo: turn on bg music
 
         _hud = new HUD(this.getContext(), _player);
-
 
         for(int i = 0; i < BULLET_COUNT; i++){
             _bullets[i] = new Bullet();
@@ -143,29 +144,15 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(final GL10 unused) {
+        _fpsCounter.logFrame();
         update(); //TODO: move updates away from the render thread...
-
-        final double newTime = System.nanoTime() * NANOSECONDS_TO_SECONDS;
-        //final double frameTime = newTime - currentTime;
-        currentTime = newTime;
-        nbFrames++;
         render();
-        if ( newTime - lastTime >= 1.0 ){
-            FPS = df.format(1000.0/((double)nbFrames)); //what is this?
-            nbFrames =0;
-            lastTime +=1;
-
-        }
     }
     //trying a fixed time-step with accumulator, courtesy of
 //   https://gafferongames.com/post/fix_your_timestep/
-    private String FPS = "";
-    double lastTime = System.nanoTime() * NANOSECONDS_TO_SECONDS;
-    int nbFrames = 0;
 
-    public String getFPS() {
-        return FPS;
-    }
+
+
 
     private void update() {
         final double newTime = System.nanoTime() * NANOSECONDS_TO_SECONDS;
@@ -185,7 +172,6 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
             collisionDetection();
             removeDeadEntities();
-            //_updateCount++;
             accumulator -= dt;
         }
     }

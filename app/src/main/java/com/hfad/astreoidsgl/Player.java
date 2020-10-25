@@ -42,6 +42,8 @@ public class Player extends GLEntity {
         _mesh.flipY();
     }
 
+
+
     @Override
     public void update(double dt){
         _rotation += (dt*ROTATION_VELOCITY) * _game._inputs._horizontalFactor;
@@ -104,8 +106,7 @@ public class Player extends GLEntity {
         HUD._playerIsHit = true;
         _game._jukebox.play(GameConfig.HURT);
         GameConfig._health--;
-        //_playerIsHit = false;
-
-
     }
+
+
 }

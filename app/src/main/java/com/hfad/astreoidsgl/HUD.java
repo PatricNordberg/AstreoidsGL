@@ -17,14 +17,11 @@ public class HUD extends SurfaceView {
     Asteroid _asteroid = null;
     protected ArrayList<Text> _texts = new ArrayList<>();
 
- 
 
     String _textHealth = String.format(getResources().getString(R.string.playerHealth), GameConfig._health);
     String _textScore = String.format(getResources().getString(R.string.score), GameConfig._score);
     String _textLevel = "Level 1";
-    String fps = "";
-
-
+    String _fps = "";
 
 
     //final float _halfScreenWidth = (float)GameConfig.STAGE_WIDTH/2; //to get the middle ish.
@@ -36,29 +33,29 @@ public class HUD extends SurfaceView {
         _texts.add(0, new Text(_textHealth, 8, 8));
         _texts.add(1, new Text(_textScore, 8, 16));
         _texts.add(2, new Text(_textLevel, 8, 24));
-        _texts.add(3, new Text(fps, 8, 32));
+        _texts.add(3, new Text(_fps, 8, 32));
 
     }
 
 
-
     public void renderHUD(Game game) {
 
-        if(_playerIsHit){
+        if (_playerIsHit) {
             _textHealth = String.format(getResources().getString(R.string.playerHealth), GameConfig._health);
-            _texts.set(0,new Text(_textHealth, 8, 8));
+            _texts.set(0, new Text(_textHealth, 8, 8));
             _playerIsHit = false;
         }
 
-        if (_laserHitAsteroid){
+
+        if (_laserHitAsteroid) {
             _textScore = String.format(getResources().getString(R.string.score), GameConfig._score);
-            _texts.set(1,new Text(_textScore, 8, 16));
+            _texts.set(1, new Text(_textScore, 8, 16));
             _laserHitAsteroid = false;
         }
-        fps = game.getFPS();
-        _texts.set(3, new Text("MS" + fps, 8, 32));
+        _fps = game._fpsCounter.getFPS();
+        _texts.set(3, new Text("FPS" + _fps, 8, 32));
 
-        for(final Text t : _texts){
+        for (final Text t : _texts) {
             t.render(game._viewportMatrix);
         }
 
