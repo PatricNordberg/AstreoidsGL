@@ -1,6 +1,11 @@
-package com.hfad.astreoidsgl;
+package com.hfad.astreoidsgl.entities;
 
 import android.opengl.Matrix;
+
+import com.hfad.astreoidsgl.GLManager;
+import com.hfad.astreoidsgl.GLPixelFont;
+import com.hfad.astreoidsgl.Mesh;
+import com.hfad.astreoidsgl.entities.GLEntity;
 
 public class Text extends GLEntity {
     public static final GLPixelFont FONT = new GLPixelFont();

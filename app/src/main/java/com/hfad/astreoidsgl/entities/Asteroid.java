@@ -1,5 +1,10 @@
-package com.hfad.astreoidsgl;
+package com.hfad.astreoidsgl.entities;
 import android.opengl.GLES20;
+
+import com.hfad.astreoidsgl.GameConfig;
+import com.hfad.astreoidsgl.HUD;
+import com.hfad.astreoidsgl.Mesh;
+import com.hfad.astreoidsgl.Utils;
 
 public class Asteroid extends GLEntity {
     private static final float MAX_VEL = 14f;

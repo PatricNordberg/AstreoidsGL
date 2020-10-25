@@ -1,9 +1,13 @@
-package com.hfad.astreoidsgl;
+package com.hfad.astreoidsgl.entities;
 
 import android.graphics.PointF;
 import android.opengl.GLES20;
 
-import com.hfad.astreoidsgl.audio.Jukebox;
+import com.hfad.astreoidsgl.CollisionDetection;
+import com.hfad.astreoidsgl.GameConfig;
+import com.hfad.astreoidsgl.HUD;
+import com.hfad.astreoidsgl.Mesh;
+import com.hfad.astreoidsgl.Utils;
 
 import java.util.Random;
 
@@ -48,8 +52,8 @@ public class Player extends GLEntity {
     public void update(double dt){
         _rotation += (dt*ROTATION_VELOCITY) * _game._inputs._horizontalFactor;
         _boostCooldown -= dt;
-        if(_game._inputs._pressingB && _boostCooldown <= 0){
-            final float theta = _rotation*(float)Utils.TO_RAD;
+        if(_game._inputs._pressingBoost && _boostCooldown <= 0){
+            final float theta = _rotation*(float) Utils.TO_RAD;
             _velX += (float)Math.sin(theta) * THRUST;
             _velY -= (float)Math.cos(theta) * THRUST;
             _game._jukebox.play(GameConfig.BOOST); //todo; fps drop, implement cooldown?
@@ -68,7 +72,7 @@ public class Player extends GLEntity {
         _velX *= DRAG;
         _velY *= DRAG;
         _bulletCooldown -= dt;
-        if(_game._inputs._pressingA && _bulletCooldown <= 0){
+        if(_game._inputs._pressingLaser && _bulletCooldown <= 0){
             setColors(1, 0, 1, 1);
             if(_game.maybeFireBullet(this)){
                 _game._jukebox.play(GameConfig.LASER);

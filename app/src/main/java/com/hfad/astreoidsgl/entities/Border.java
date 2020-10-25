@@ -1,6 +1,10 @@
-package com.hfad.astreoidsgl;
+package com.hfad.astreoidsgl.entities;
 
 import android.opengl.GLES20;
+
+import com.hfad.astreoidsgl.Mesh;
+import com.hfad.astreoidsgl.Utils;
+import com.hfad.astreoidsgl.entities.GLEntity;
 
 public class Border extends GLEntity {
     public Border(final float x, final float y, final float worldWidth, final float worldHeight){

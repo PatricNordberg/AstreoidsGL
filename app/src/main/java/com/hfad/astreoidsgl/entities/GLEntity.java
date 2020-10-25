@@ -1,17 +1,22 @@
-package com.hfad.astreoidsgl;
+package com.hfad.astreoidsgl.entities;
 
 import android.graphics.PointF;
 import android.opengl.Matrix;
+
+import com.hfad.astreoidsgl.GLManager;
+import com.hfad.astreoidsgl.Game;
+import com.hfad.astreoidsgl.GameConfig;
+import com.hfad.astreoidsgl.Mesh;
 
 import java.util.Objects;
 
 public class GLEntity {
     public static Game _game = null; //shared ref, managed by the Game-class!
-    Mesh _mesh = null;
-    float _color[] = { 1.0f, 1.0f, 1.0f, 1.0f }; //default white
-    float _depth = 0f; //we'll use _depth for z-axis if we need to entities
+    protected Mesh _mesh = null;
+    protected float[] _color = { 1.0f, 1.0f, 1.0f, 1.0f }; //default white
+    protected float _depth = 0f; //we'll use _depth for z-axis if we need to entities
     float _scale = 1f;
-    float _rotation = 0f; //angle in degrees
+    public float _rotation = 0f; //angle in degrees
     public float _x = 0.0f;
     public float _y = 0.0f;
     public float _velX = 0f;

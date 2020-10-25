@@ -1,10 +1,8 @@
-package com.hfad.astreoidsgl;
+package com.hfad.astreoidsgl.entities;
 
 import android.graphics.Color;
 import android.opengl.GLES20;
-import android.os.SystemClock;
 
-import com.hfad.astreoidsgl.GLEntity;
 import com.hfad.astreoidsgl.Mesh;
 
 public class Star extends GLEntity {

@@ -4,6 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.SurfaceView;
 
+import com.hfad.astreoidsgl.entities.Asteroid;
+import com.hfad.astreoidsgl.entities.Player;
+import com.hfad.astreoidsgl.entities.Text;
+
 import java.util.ArrayList;
 
 

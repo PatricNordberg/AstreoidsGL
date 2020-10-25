@@ -2,6 +2,8 @@ package com.hfad.astreoidsgl;
 
 import android.graphics.PointF;
 
+import com.hfad.astreoidsgl.entities.GLEntity;
+
 public class CollisionDetection {
     public static final float TO_DEGREES = (float)(180.0 / Math.PI);
     public static final float TO_RADIANS = (float)(Math.PI / 180.0);
@@ -28,7 +30,7 @@ public class CollisionDetection {
         }
         return true;
     }
-    static boolean areBoundingSpheresOverlapping(final GLEntity a, final GLEntity b) {
+    public static boolean areBoundingSpheresOverlapping(final GLEntity a, final GLEntity b) {
         final float dx = a.centerX()-b.centerX(); //delta x
         final float dy = a.centerY()-b.centerY();
         final float distanceSq = (dx*dx + dy*dy);

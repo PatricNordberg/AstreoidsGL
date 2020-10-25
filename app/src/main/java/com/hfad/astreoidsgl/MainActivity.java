@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.hfad.astreoidsgl.input.CompositeControl;
 import com.hfad.astreoidsgl.input.InputManager;
 import com.hfad.astreoidsgl.input.TouchController;
+import com.hfad.astreoidsgl.input.VirtualJoystick;
 
 public class MainActivity extends AppCompatActivity {
     private Game _game = null;
@@ -21,9 +23,13 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        InputManager controls = (InputManager) new TouchController(findViewById(R.id.gamepad));
         _game = findViewById(R.id.game);
-        _game.setControls(controls);
+        InputManager input = new CompositeControl(
+                new VirtualJoystick(findViewById(R.id.virtual_joystick)),
+                new TouchController(findViewById(R.id.gamepad))
+
+        );
+        _game.setControls(input);
     }
 
 

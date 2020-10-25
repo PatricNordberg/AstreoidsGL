@@ -1,7 +1,6 @@
 package com.hfad.astreoidsgl;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -11,6 +10,12 @@ import android.view.SurfaceHolder;
 
 import com.hfad.astreoidsgl.audio.BackgroundMusic;
 import com.hfad.astreoidsgl.audio.Jukebox;
+import com.hfad.astreoidsgl.entities.Asteroid;
+import com.hfad.astreoidsgl.entities.Border;
+import com.hfad.astreoidsgl.entities.Bullet;
+import com.hfad.astreoidsgl.entities.GLEntity;
+import com.hfad.astreoidsgl.entities.Player;
+import com.hfad.astreoidsgl.entities.Star;
 import com.hfad.astreoidsgl.input.InputManager;
 
 import java.util.ArrayList;
@@ -161,6 +166,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
         accumulator += frameTime;
         while(accumulator >= dt){
+            input(dt);
             for(final Asteroid a : _asteroids){
                 a.update(dt);
             }
@@ -233,7 +239,15 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     }
 
     public void setControls(final InputManager input){
+        _inputs.onStart();
         _inputs = input;
+        _inputs.onPause();
+        _inputs.onStop();
+    }
+
+    private void input(final double dt) {
+        _inputs.update((float) dt);
+
     }
 
     public boolean maybeFireBullet(final GLEntity source){

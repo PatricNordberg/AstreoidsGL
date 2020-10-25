@@ -1,9 +1,9 @@
-package com.hfad.astreoidsgl;
+package com.hfad.astreoidsgl.entities;
 
 import android.graphics.PointF;
 import android.opengl.GLES20;
 
-import com.hfad.astreoidsgl.GLEntity;
+import com.hfad.astreoidsgl.CollisionDetection;
 import com.hfad.astreoidsgl.Mesh;
 
 import static com.hfad.astreoidsgl.CollisionDetection.areBoundingSpheresOverlapping;
