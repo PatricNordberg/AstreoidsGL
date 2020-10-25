@@ -44,9 +44,9 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     private static final int BULLET_COUNT = (int)(Bullet.TIME_TO_LIVE/Player.TIME_BETWEEN_SHOTS)+1;
     Bullet[] _bullets = new Bullet[BULLET_COUNT];
     private static int STAR_COUNT = 100;
-    private static int ASTEROID_COUNT = 10;
+    public static int ASTEROID_COUNT = 10;
     private ArrayList<Star> _stars= new ArrayList();
-    private ArrayList<Asteroid> _asteroids = new ArrayList();
+    public ArrayList<Asteroid> _asteroids = new ArrayList();
 
 
     //private static final float BG_COLOR[] = {135/255f, 206/255f, 235/255f, 1f}; //RGBA
@@ -128,7 +128,11 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         final int minAsteroid = 11;
         final int maxAsteroid = 13;
         for(int i = 0; i < ASTEROID_COUNT; i++){
-            _asteroids.add(new Asteroid(r.nextInt((int) GameConfig.WORLD_WIDTH),  r.nextInt((int) GameConfig.WORLD_HEIGHT), r.nextInt((maxAsteroid - minAsteroid) + 1) + minAsteroid));
+            try {
+                _asteroids.add(new Asteroid(r.nextInt((int) GameConfig.WORLD_WIDTH),  r.nextInt((int) GameConfig.WORLD_HEIGHT), r.nextInt((maxAsteroid - minAsteroid) + 1) + minAsteroid));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
 
@@ -265,11 +269,11 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
             if(b.isDead()){ continue; } //skip dead bullets
             for(final Asteroid a : _asteroids) {
                 if(b.isColliding(a)){
-                   a.onHitLaser();
+                   a.onHitLaser(a);
                     if(a.isDead()){continue;}
                     b.onCollision(a); //notify each entity so they can decide what to do
                     a.onCollision(b);
-                    b._ttl = 0; //kill bullet if colliding with asteroid
+                    b._ttl = 0; //kill bullet if colliding with asteroid, timetolive = 0;
                 }
             }
         }
