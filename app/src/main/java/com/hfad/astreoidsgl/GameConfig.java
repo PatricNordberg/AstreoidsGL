@@ -32,8 +32,8 @@ public class GameConfig {
     public static int _health = 3;
     public static int _score = 0;
 
-    public static float WORLD_WIDTH = 160; //80x80 - much smaller than the viewport.
-    public static float WORLD_HEIGHT = 90;
+    public static float WORLD_WIDTH = 250; //80x80 - much smaller than the viewport.
+    public static float WORLD_HEIGHT = 140;
 
 
     }

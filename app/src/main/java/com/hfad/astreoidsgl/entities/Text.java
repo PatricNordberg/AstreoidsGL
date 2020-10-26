@@ -11,7 +11,7 @@ public class Text extends GLEntity {
     public static final GLPixelFont FONT = new GLPixelFont();
     public static float GLYPH_WIDTH = FONT.WIDTH;
     public static float GLYPH_HEIGHT = FONT.HEIGHT;
-    public static float GLYPH_SPACING = 1f;
+    public static float GLYPH_SPACING = 0f;
 
     Mesh[] _meshes = null;
     private float _spacing = GLYPH_SPACING; //spacing between characters
@@ -22,7 +22,7 @@ public class Text extends GLEntity {
         setString(s);
         _x = x;
         _y = y;
-        setScale(1f); //TODO: magic value
+        setScale(2f); //TODO: magic value
     }
 
     @Override
