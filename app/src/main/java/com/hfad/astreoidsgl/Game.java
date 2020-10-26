@@ -46,7 +46,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     Bullet[] _bullets = new Bullet[BULLET_COUNT];
     private static int STAR_COUNT = 100;
     public static int ASTEROID_COUNT = 10;
-    public static int shattered_asteroids_count = 0;
+
     private ArrayList<Star> _stars = new ArrayList();
     public ArrayList<Asteroid> _asteroids = new ArrayList();
     public ArrayList<Asteroid> _shatteredAsteroids = new ArrayList();
@@ -119,8 +119,8 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     }
 
 
-    final int minAsteroid = 11;
-    final int maxAsteroid = 13;
+    final int minAsteroid = 3;
+    final int maxAsteroid = 11;
     Random r = new Random();
 
     @Override
@@ -147,10 +147,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
                 e.printStackTrace();
             }
         }
-
-
     }
-
 
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
@@ -266,13 +263,6 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         return shader;
     }
 
-    public float getAngle() {
-        return mAngle;
-    }
-
-    public void setAngle(float angle) {
-        mAngle = angle;
-    }
 
     public void setControls(final InputManager input) {
         _inputs.onStart();

@@ -13,8 +13,6 @@ import java.util.Random;
 
 import static com.hfad.astreoidsgl.CollisionDetection.areBoundingSpheresOverlapping;
 
-
-
 public class Player extends GLEntity {
 
     private static final String TAG = "Player";
@@ -57,6 +55,7 @@ public class Player extends GLEntity {
             _velX += (float)Math.sin(theta) * THRUST;
             _velY -= (float)Math.cos(theta) * THRUST;
             _game._jukebox.play(GameConfig.BOOST); //todo; fps drop, implement cooldown?
+            //todo: implement effects for boost - fire - bullet åt andra håller bara
             _boostCooldown = TIME_BETWEEN_BOOST;
         }
 
@@ -67,7 +66,6 @@ public class Player extends GLEntity {
             _x = r.nextInt((int) GameConfig.WORLD_WIDTH);
             _hyperspaceCooldown = TIME_BETWEEN_HYPERSPACE;
         }
-
 
         _velX *= DRAG;
         _velY *= DRAG;
@@ -86,8 +84,6 @@ public class Player extends GLEntity {
 
     @Override
     public void render(float[] viewportMatrix) {
-
-
         //ask the super class (GLEntity) to render us
         super.render(viewportMatrix);
     }
@@ -111,6 +107,5 @@ public class Player extends GLEntity {
         _game._jukebox.play(GameConfig.HURT);
         GameConfig._health--;
     }
-
 
 }
