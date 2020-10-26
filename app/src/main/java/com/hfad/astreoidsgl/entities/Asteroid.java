@@ -42,7 +42,7 @@ public class Asteroid extends GLEntity {
      */
 
     private void selectAsteroidSize() {
-    int i = _game._asteroids.size();
+    int i = _game._asteroidsToAdd.size();
             if (i < 4){
                 largeAsteroid();
             }
