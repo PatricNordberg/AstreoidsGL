@@ -46,10 +46,10 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     Bullet[] _bullets = new Bullet[BULLET_COUNT];
     private static int STAR_COUNT = 100;
     public static int ASTEROID_COUNT = 10;
-    public static int SMALL_ASTEROID_COUNT = 12;
+    public static int shattered_asteroids_count = 0;
     private ArrayList<Star> _stars= new ArrayList();
     public ArrayList<Asteroid> _asteroids = new ArrayList();
-    public ArrayList<Asteroid> _smallAsteroids = new ArrayList();
+    public ArrayList<Asteroid> _shatteredAsteroids = new ArrayList();
 
 
     //private static final float BG_COLOR[] = {135/255f, 206/255f, 235/255f, 1f}; //RGBA
@@ -77,6 +77,9 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     private float previousX;
     private float previousY;
     FPSCounter _fpsCounter = null;
+    private boolean _explosion;
+    public boolean initSmallAsteroid;
+    public boolean initMediumAsteroid;
 
     //private MyGLRenderer _renderer = null;
 
@@ -111,7 +114,9 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     }
 
 
-
+    final int minAsteroid = 11;
+    final int maxAsteroid = 13;
+    Random r = new Random();
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         GLManager.buildProgram(); //compile, link and upload our GL program
@@ -124,21 +129,20 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         _jukebox.play(GameConfig.START_GAME);
 
 
-         Random r = new Random();
+
         for(int i = 0; i < STAR_COUNT; i++){
             _stars.add(new Star(r.nextInt((int) GameConfig.WORLD_WIDTH), r.nextInt((int) GameConfig.WORLD_HEIGHT)));
         }
-        final int minAsteroid = 11;
-        final int maxAsteroid = 13;
+
         for(int i = 0; i < ASTEROID_COUNT; i++){
             try {
                 _asteroids.add(new Asteroid(r.nextInt((int) GameConfig.WORLD_WIDTH),  r.nextInt((int) GameConfig.WORLD_HEIGHT), r.nextInt((maxAsteroid - minAsteroid) + 1) + minAsteroid));
-                // Avoid the center where the player spawns
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
 
 
     }
@@ -179,6 +183,12 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
             for(final Asteroid a : _asteroids){
                 a.update(dt);
             }
+
+            for(final Asteroid smallAsteroid : _shatteredAsteroids){
+                smallAsteroid.update(dt);
+            }
+
+
             for(final Bullet b : _bullets){
                 if(b.isDead()){ continue; } //skip
                 b.update(dt);
@@ -213,12 +223,18 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
         for(final Asteroid a : _asteroids){
             a.render(_viewportMatrix);
+        }
+
+        for(final Asteroid smallAsteroid : _shatteredAsteroids){
+            smallAsteroid.render(_viewportMatrix);
+        }
+
 
             for(final Bullet b : _bullets){
                 if(b.isDead()){ continue; } //skip
                 b.render(_viewportMatrix);
             }
-        }
+
 
         for(final Star s : _stars){
             if(s._showIt) {
@@ -286,8 +302,25 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
                     b._ttl = 0; //kill bullet if colliding with asteroid, timetolive = 0;
                 }
             }
+            for(final Asteroid a : _shatteredAsteroids) {
+                if(b.isColliding(a)){
+                    a.onHitLaser(a);
+                    if(a.isDead()){continue;}
+                    b.onCollision(a); //notify each entity so they can decide what to do
+                    a.onCollision(b);
+                    b._ttl = 0; //kill bullet if colliding with asteroid, timetolive = 0;
+                }
+            }
         }
         for(final Asteroid a : _asteroids) {
+            if(a.isDead()){continue;}
+            if(_player.isColliding(a)){
+                _player.onCollision(a);
+                _player.onHitAsteroid();
+                a.onCollision(_player);
+            }
+        }
+        for(final Asteroid a : _shatteredAsteroids) {
             if(a.isDead()){continue;}
             if(_player.isColliding(a)){
                 _player.onCollision(a);
@@ -306,6 +339,48 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
                 _asteroids.remove(i);
             }
         }
+        Asteroid currSmallAsteroid;
+        final int count2 = _shatteredAsteroids.size();
+        for(int i = count2-1; i >= 0; i--){
+            currSmallAsteroid = _shatteredAsteroids.get(i);
+            if(currSmallAsteroid.isDead()){
+                _shatteredAsteroids.remove(i);
+            }
+        }
     }
 
+    public void mediumAsteroidExploding(Asteroid a) {
+        initSmallAsteroid = true;
+        int i = 0;
+        while(i < 3) {
+            try {
+                _shatteredAsteroids.add(new Asteroid(a._x, a._y, r.nextInt((maxAsteroid - minAsteroid) + 1) + minAsteroid));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            i++;
+        }
+        initSmallAsteroid = false;
+
+
+    }
+    public void largeAsteroidExploding(Asteroid a) {
+        initMediumAsteroid = true;
+        int i = 0;
+        while(i < 3) {
+            try {
+                _shatteredAsteroids.add(new Asteroid(a._x, a._y, r.nextInt((maxAsteroid - minAsteroid) + 1) + minAsteroid));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            i++;
+        }
+        initMediumAsteroid = false;
+
+
+    }
 }

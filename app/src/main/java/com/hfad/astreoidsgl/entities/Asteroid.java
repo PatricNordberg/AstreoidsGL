@@ -17,7 +17,7 @@ public class Asteroid extends GLEntity {
         _x = x;
         _y = y;
         //randomAstroid();
-        selectAstroidSize();
+        selectAsteroidSize();
         final double radius = _width*0.5;
         final float[] verts = Mesh.generateLinePolygon(points, radius);
         _mesh = new Mesh(verts, GLES20.GL_LINES);
@@ -41,27 +41,27 @@ public class Asteroid extends GLEntity {
 
      */
 
-    private void selectAstroidSize() {
+    private void selectAsteroidSize() {
     int i = _game._asteroids.size();
             if (i < 4){
-                largeAstroid();
+                largeAsteroid();
             }
-            if (i >= 4 && i<8){
-                mediumAstroid();
+            if (i >= 4 && i<8 || _game.initMediumAsteroid){
+                mediumAsteroid();
             }
-            if (i >= 8 && i <= 10){
+            if (i >= 8 && i <= 10 || _game.initSmallAsteroid){
                 smallAsteroid();
             }
         }
 
 
-    private void largeAstroid() {
+    private void largeAsteroid() {
         _width = 12;
         _height = _width;
         velocityAsteroids(1, 2);
     }
 
-    private void mediumAstroid() {
+    private void mediumAsteroid() {
         _width = 8;
         _height = _width;
         velocityAsteroids(2, 4);
@@ -85,9 +85,11 @@ public class Asteroid extends GLEntity {
 
         if (a._width == 12){
             GameConfig._score++;
+            _game.largeAsteroidExploding(a);
         }
         if (a._width == 8){
             GameConfig._score+=2;
+            _game.mediumAsteroidExploding(a);
         }
         if (a._width == 4){
             GameConfig._score+=3;
