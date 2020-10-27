@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="keypad_size">48dp</dimen>
+    <dimen name="keypad_padding">20dp</dimen>
+    <dimen name="keypad_width">52dp</dimen>
+    <dimen name="keypad_height">61dp</dimen>
 
 </resources>

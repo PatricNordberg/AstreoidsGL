@@ -25,22 +25,7 @@ public class Particles extends GLEntity {
         _mesh.setWidthHeight(_width, _height);
     }
 
-    //random astroids generator
-    /*
-    private void randomAstroid() {
-        int r = new Random().nextInt(3);
-        switch (r) {
-            case 0: largeAstroid();
-            break;
-            case 1:  mediumAstroid();
-                break;
-            case 2: smallParticles();
-                break;
 
-        }
-    }
-
-     */
 
 
 
@@ -48,14 +33,6 @@ public class Particles extends GLEntity {
         _velX = Utils.between(MIN_VEL * i, MAX_VEL * i);
         _velY = Utils.between(MIN_VEL * i, MAX_VEL * i);
         _velR = Utils.between(MIN_VEL * i2, MAX_VEL * i2);
-    }
-
-
-
-    @Override
-    public void update(double dt) {
-
-        super.update(dt);
     }
 
 
