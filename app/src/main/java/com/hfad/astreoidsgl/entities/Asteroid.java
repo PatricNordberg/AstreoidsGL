@@ -93,6 +93,7 @@ public class Asteroid extends GLEntity {
         }
         if (a._width == 4){
             GameConfig._score+=3;
+            _game.smallAsteroidExploding(a);
         }
 
     }

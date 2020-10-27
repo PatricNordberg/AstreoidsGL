@@ -14,6 +14,7 @@ import com.hfad.astreoidsgl.entities.Asteroid;
 import com.hfad.astreoidsgl.entities.Border;
 import com.hfad.astreoidsgl.entities.Bullet;
 import com.hfad.astreoidsgl.entities.GLEntity;
+import com.hfad.astreoidsgl.entities.Particles;
 import com.hfad.astreoidsgl.entities.Player;
 import com.hfad.astreoidsgl.entities.Star;
 import com.hfad.astreoidsgl.input.InputManager;
@@ -46,6 +47,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     Bullet[] _bullets = new Bullet[BULLET_COUNT];
     private static int STAR_COUNT = 100;
     public static int ASTEROID_COUNT = 10;
+    public static int PARTICLE_COUNT = 20;
 
     private ArrayList<Star> _stars = new ArrayList();
     public ArrayList<Asteroid> _asteroids = new ArrayList();
@@ -54,6 +56,9 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     public ArrayList<Asteroid> _shatteredAsteroidsToRemove = new ArrayList();
     public ArrayList<Asteroid> _asteroidsToAdd = new ArrayList();
     public ArrayList<Asteroid> _shatteredAsteroidsToAdd = new ArrayList();
+    public ArrayList<Particles> _smallParticles = new ArrayList();
+    public ArrayList<Particles> _mediumParticles = new ArrayList();
+    public ArrayList<Particles> _largeParticles = new ArrayList();
 
 
     //private static final float BG_COLOR[] = {135/255f, 206/255f, 235/255f, 1f}; //RGBA
@@ -84,6 +89,11 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     private boolean _explosion;
     public boolean initSmallAsteroid;
     public boolean initMediumAsteroid;
+    private boolean showParticles;
+    private long timeLarge;
+    private long timeMedium;
+    private long timeSmall;
+
 
 
     //private MyGLRenderer _renderer = null;
@@ -114,6 +124,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         for (int i = 0; i < BULLET_COUNT; i++) {
             _bullets[i] = new Bullet();
         }
+
 
         setRenderer(this);
     }
@@ -175,6 +186,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         final double newTime = System.nanoTime() * NANOSECONDS_TO_SECONDS;
         final double frameTime = newTime - currentTime;
         currentTime = newTime;
+        updateParticles();
 
         accumulator += frameTime;
         while (accumulator >= dt) {
@@ -185,6 +197,21 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
             for (final Asteroid smallAsteroid : _shatteredAsteroids) {
                 smallAsteroid.update(dt);
+            }
+            if (_largeParticles.size() > 0){
+                for (final Particles particles : _largeParticles) {
+                    particles.update(dt);
+                }
+            }
+            if (_mediumParticles.size() > 0) {
+                for (final Particles particles : _mediumParticles) {
+                    particles.update(dt);
+                }
+            }
+            if (_smallParticles.size() > 0) {
+                for (final Particles particles : _smallParticles) {
+                    particles.update(dt);
+                }
             }
 
 
@@ -207,6 +234,8 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     }
 
 
+
+
     private void render() {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT); //clear buffer to background color
         //setup a projection matrix by passing in the range of the game world that will be mapped by OpenGL to the screen.
@@ -220,6 +249,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         final float far = 1f;
         Matrix.orthoM(_viewportMatrix, offset, left, right, bottom, top, near, far);
 
+
         _border.render(_viewportMatrix);
 
         for (final Asteroid a : _asteroids) {
@@ -229,7 +259,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         for (final Asteroid smallAsteroid : _shatteredAsteroids) {
             smallAsteroid.render(_viewportMatrix);
         }
-
+        renderParticles();
 
         for (final Bullet b : _bullets) {
             if (b.isDead()) {
@@ -247,6 +277,45 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         _player.render(_viewportMatrix);
         _hud.renderHUD(this);
 
+    }
+
+
+    private void updateParticles() {
+        double getTime = System.currentTimeMillis();
+
+        //update particles
+        if(getTime - timeLarge > 1000){
+            _largeParticles.clear();
+        }
+        if(getTime - timeMedium > 1000){
+            _mediumParticles.clear();
+        }
+        if(getTime - timeSmall > 1000){
+            _smallParticles.clear();
+        }
+    }
+
+    private void renderParticles() {
+        //render particles
+        double getTime = System.currentTimeMillis();
+        if (getTime - timeLarge < 1000){
+            for (final Particles particles : _largeParticles) {
+                particles.render(_viewportMatrix);
+            }
+
+        }
+        if (getTime - timeMedium < 1000){
+            for (final Particles particles : _mediumParticles) {
+                particles.render(_viewportMatrix);
+            }
+
+        }
+        if (getTime - timeSmall < 1000){
+            for (final Particles particles : _smallParticles) {
+                particles.render(_viewportMatrix);
+            }
+
+        }
     }
 
 
@@ -380,9 +449,19 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         _asteroidsToAdd.clear();
         _shatteredAsteroidsToAdd.clear();
     }
+    public void smallAsteroidExploding(Asteroid a){
+        timeSmall = System.currentTimeMillis();
+        for (int i = 0; i < PARTICLE_COUNT; i++) {
+            _smallParticles.add(new Particles(a._x, a._y, 0));
+        }
+    }
 
     public void mediumAsteroidExploding(Asteroid a) {
         initSmallAsteroid = true;
+        timeMedium = System.currentTimeMillis();
+        for (int i = 0; i < PARTICLE_COUNT; i++) {
+            _mediumParticles.add(new Particles(a._x, a._y, 0));
+        }
         int i = 0;
         while (i < 3) {
             try {
@@ -401,6 +480,10 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
     public void largeAsteroidExploding(Asteroid a) {
         initMediumAsteroid = true;
+        timeLarge = System.currentTimeMillis();
+        for (int i = 0; i < PARTICLE_COUNT; i++) {
+            _largeParticles.add(new Particles(a._x, a._y, 0));
+        }
         int i = 0;
         while (i < 3) {
             try {
