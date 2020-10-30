@@ -1,7 +1,6 @@
 package com.hfad.astreoidsgl.input;
 
 
-
 import com.hfad.astreoidsgl.Utils;
 
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ public class CompositeControl extends InputManager {
         mCount = mInputs.size();
     }
 
-    public void addInput(InputManager im){
+    public void addInput(InputManager im) {
         mInputs.add(im);
         mCount = mInputs.size();
     }
@@ -25,41 +24,41 @@ public class CompositeControl extends InputManager {
 
     @Override
     public void onStart() {
-        for(InputManager im : mInputs){
+        for (InputManager im : mInputs) {
             im.onStart();
         }
     }
 
     @Override
     public void onStop() {
-        for(InputManager im : mInputs){
+        for (InputManager im : mInputs) {
             im.onStop();
         }
     }
 
     @Override
     public void onPause() {
-        for(InputManager im : mInputs){
+        for (InputManager im : mInputs) {
             im.onPause();
         }
     }
 
     @Override
     public void onResume() {
-        for(InputManager im : mInputs){
+        for (InputManager im : mInputs) {
             im.onResume();
         }
     }
 
-  @Override
+    @Override
     public void update(float dt) {
         InputManager temp;
-      _pressingHyperspace = false;
-      _pressingBoost = false;
-      _pressingLaser = false;
+        _pressingHyperspace = false;
+        _pressingBoost = false;
+        _pressingLaser = false;
         _horizontalFactor = 0.0f;
         _verticalFactor = 0.0f;
-        for(int i = 0; i < mCount; i++){
+        for (int i = 0; i < mCount; i++) {
             temp = mInputs.get(i);
             temp.update(dt);
             _pressingHyperspace = _pressingHyperspace || temp._pressingHyperspace;

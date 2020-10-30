@@ -1,7 +1,5 @@
 package com.hfad.astreoidsgl;
 
-import android.util.Log;
-
 public class FPSCounter {
     long _startTime = System.nanoTime();
     int _frames = 0;
@@ -9,8 +7,8 @@ public class FPSCounter {
 
     public void logFrame() {
         _frames++;
-        if(System.nanoTime() - _startTime >= 1000000000) {
-             _fps = String.valueOf(_frames);
+        if (System.nanoTime() - _startTime >= 1000000000) {
+            _fps = String.valueOf(_frames);
             _frames = 0;
             _startTime = System.nanoTime();
         }

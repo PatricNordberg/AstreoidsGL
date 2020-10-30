@@ -9,11 +9,11 @@ import java.util.Random;
 
 public class Star extends GLEntity {
     private static Mesh m = null; //Q&D pool
-    Random r;
+    final Random r;
     public boolean _showIt;
 
 
-    public Star(final float x, final float y){
+    public Star(final float x, final float y) {
         super();
         r = new Random();
         _x = x;
@@ -22,7 +22,7 @@ public class Star extends GLEntity {
         _color[1] = Color.green(Color.YELLOW) / 255f;
         _color[2] = Color.blue(Color.YELLOW) / 255f;
         _color[3] = 1f;
-        if(m == null) {
+        if (m == null) {
             final float[] vertices = {0, 0, 0};
             m = new Mesh(vertices, GLES20.GL_POINTS);
         }
@@ -32,7 +32,7 @@ public class Star extends GLEntity {
     @Override
     public void update(double dt) {
         int n = r.nextInt(1000);
-        if(n == 0){
+        if (n == 0) {
 // Switch on or off
             _showIt = !_showIt;
         }

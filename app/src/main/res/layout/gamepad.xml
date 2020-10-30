@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_gravity="bottom"
-    android:padding="@dimen/keypad_padding"
+    android:id="@+id/gamepad"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/gamepad">
+    android:layout_gravity="bottom"
+    android:padding="@dimen/keypad_padding">
 
     <!--
     <Button
@@ -12,17 +12,17 @@
         android:layout_width="@dimen/keypad_size"
         android:layout_height="@dimen/keypad_size"
         android:layout_alignParentStart="true"
-        android:background="@drawable/ic_left_arrow_arrows_svgrepo_com" />
+        android:background="@drawable/left_arrow" />
         -->
-<!--
-    <Button
-        android:id="@+id/keypad_right"
-        android:layout_width="@dimen/keypad_size"
-        android:layout_height="@dimen/keypad_size"
-        android:layout_marginStart="48dp"
-        android:layout_toEndOf="@+id/keypad_left"
-        android:background="@drawable/ic_right_arrow_next_svgrepo_com" />
-        -->
+    <!--
+        <Button
+            android:id="@+id/keypad_right"
+            android:layout_width="@dimen/keypad_size"
+            android:layout_height="@dimen/keypad_size"
+            android:layout_marginStart="48dp"
+            android:layout_toEndOf="@+id/keypad_left"
+            android:background="@drawable/right_arrow" />
+            -->
 
     <Button
         android:id="@+id/keypad_b"
@@ -30,7 +30,7 @@
         android:layout_height="@dimen/keypad_height"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="0dp"
-        android:background="@drawable/ic_rocket_red" />
+        android:background="@drawable/rocket_red" />
 
     <Button
         android:id="@+id/keypad_a"
@@ -38,7 +38,7 @@
         android:layout_height="@dimen/keypad_height"
         android:layout_marginEnd="40dp"
         android:layout_toStartOf="@+id/keypad_b"
-        android:background="@drawable/ic_laser_purple" />
+        android:background="@drawable/laser_purple" />
 
     <Button
         android:id="@+id/keypad_hyperspace"
@@ -47,5 +47,5 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="40dp"
         android:layout_toStartOf="@+id/keypad_a"
-        android:background="@drawable/ic_dice" />
+        android:background="@drawable/dice" />
 </RelativeLayout>

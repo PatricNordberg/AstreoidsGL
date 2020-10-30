@@ -6,7 +6,6 @@ import android.content.res.AssetManager;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 
-
 import com.hfad.astreoidsgl.GameConfig;
 
 import java.io.IOException;
@@ -58,7 +57,6 @@ public class Jukebox {
     }
 
 
-
     public void play(final int soundID) {
         final float leftVolume = 1f;
         final float rightVolume = 1f;
@@ -77,7 +75,6 @@ public class Jukebox {
         _soundPool.release();
         _soundPool = null;
     }
-
 
 
 }

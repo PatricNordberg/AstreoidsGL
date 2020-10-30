@@ -1,22 +1,16 @@
 package com.hfad.astreoidsgl.shapes;
 
-import android.opengl.GLES20;
-
 //import com.hfad.astreoidsgl.MyGLRenderer;
 
-import com.hfad.astreoidsgl.Game;
 import com.hfad.astreoidsgl.Mesh;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-
 public class Triangle extends Mesh {
-    static float[] vertices = { // in counterclockwise order:
-            0.0f,  0.5f, 0.0f, 	// top
-            -0.5f, -0.5f, 0.0f,	// bottom left
-            0.5f, -0.5f, 0.0f  	// bottom right
+    static final float[] vertices = { // in counterclockwise order:
+            0.0f, 0.5f, 0.0f,    // top
+            -0.5f, -0.5f, 0.0f,    // bottom left
+            0.5f, -0.5f, 0.0f    // bottom right
     };
+
     public Triangle() {
         super(vertices);
     }

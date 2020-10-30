@@ -17,11 +17,9 @@ public class HUD extends SurfaceView {
     private static final String TAG = "";
     public static boolean _laserHitAsteroid = false;
     public static boolean _playerIsHit = false;
+    protected final ArrayList<Text> _texts = new ArrayList<>();
     Player _player = null;
     Asteroid _asteroid = null;
-    protected ArrayList<Text> _texts = new ArrayList<>();
-
-
     String _textHealth = String.format(getResources().getString(R.string.playerHealth), GameConfig._health);
     String _textScore = String.format(getResources().getString(R.string.score), GameConfig._score);
     String _textLevel = "";

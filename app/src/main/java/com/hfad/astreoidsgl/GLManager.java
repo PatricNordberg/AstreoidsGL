@@ -6,23 +6,36 @@ import android.util.Log;
 
 import java.nio.FloatBuffer;
 
+@SuppressWarnings({"FieldCanBeLocal", "SpellCheckingInspection"})
 public class GLManager {
     public final static String TAG = "GLManager";
     private static final int OFFSET = 0; //just to have a name for the parameter
-
+    //shader source code (could be loaded from textfile!)
+    private final static String vertexShaderCode =
+            "uniform mat4 modelViewProjection;\n" + // A constant representing the combined model/view/projection matrix.
+                    "attribute vec4 position;\n" +      // Per-vertex position information that we will pass in.
+                    "void main() {\n" +                 // The entry point for our vertex shader.
+                    "    gl_Position = modelViewProjection\n" +    // gl_Position is a special variable used to store the final position.
+                    "        * position;\n" +// Multiply the vertex by the matrix to get the final point in normalized screen coordinates.
+                    "    gl_PointSize = 8.0;\n" + //pixel width of points
+                    "}\n";
+    private final static String fragmentShaderCode =
+            "precision mediump float;\n" + //we don't need high precision floats for fragments
+                    "uniform vec4 color;\n" + // a constant color to apply to all pixels
+                    "void main() {\n" + // The entry point for our fragment shader.
+                    "  gl_FragColor = color;\n" + // Pass the color directly through the pipeline.
+                    "}\n";
+    public static boolean isActive;
     //handles to various GL objects:
     private static int glProgramHandle; //handle to the compiled shader program
     private static int colorUniformHandle; //handle to the color setting
     private static int positionAttributeHandle; //handle to the vertex position setting
+    private static int MVPMatrixHandle; //handle to the model-view-projection matrix
     float[] vertices = { // in counterclockwise order:
             0.0f, 0.5f, 0.0f,        // top
             -0.5f, -0.5f, 0.0f,        // bottom left
             0.5f, -0.5f, 0.0f        // bottom right
     };
-
-    private static int MVPMatrixHandle; //handle to the model-view-projection matrix
-    public static boolean isActive;
-
 
     public static void draw(final Mesh model, final float[] modelViewMatrix, final float[] color) {
         setShaderColor(color);
@@ -50,7 +63,7 @@ public class GLManager {
     }
 
     private static void drawMesh(final int drawMode, final int vertexCount) {
-        Utils.require (drawMode == GLES20.GL_TRIANGLES
+        Utils.require(drawMode == GLES20.GL_TRIANGLES
                 || drawMode == GLES20.GL_LINES
                 || drawMode == GLES20.GL_POINTS);
         // draw the previously uploaded vertices
@@ -60,27 +73,9 @@ public class GLManager {
         checkGLError("drawMesh");
     }
 
-
-    //shader source code (could be loaded from textfile!)
-    private final static String vertexShaderCode =
-            "uniform mat4 modelViewProjection;\n" + // A constant representing the combined model/view/projection matrix.
-                    "attribute vec4 position;\n" +      // Per-vertex position information that we will pass in.
-                    "void main() {\n" +                 // The entry point for our vertex shader.
-                    "    gl_Position = modelViewProjection\n" +    // gl_Position is a special variable used to store the final position.
-                    "        * position;\n" +// Multiply the vertex by the matrix to get the final point in normalized screen coordinates.
-                    "    gl_PointSize = 8.0;\n" + //pixel width of points
-                    "}\n";
-    private final static String fragmentShaderCode =
-            "precision mediump float;\n" + //we don't need high precision floats for fragments
-                    "uniform vec4 color;\n" + // a constant color to apply to all pixels
-                    "void main() {\n" + // The entry point for our fragment shader.
-                    "  gl_FragColor = color;\n" + // Pass the color directly through the pipeline.
-                    "}\n";
-
-
     @SuppressLint("Assert")
     private static int compileShader(final int type, final String shaderCode) {
-        Utils.require (type == GLES20.GL_VERTEX_SHADER || type == GLES20.GL_FRAGMENT_SHADER);
+        Utils.require(type == GLES20.GL_VERTEX_SHADER || type == GLES20.GL_FRAGMENT_SHADER);
         final int handle = GLES20.glCreateShader(type); // Create a shader object and store its handle
         GLES20.glShaderSource(handle, shaderCode); // Pass in the code
         GLES20.glCompileShader(handle); // then compile the shader

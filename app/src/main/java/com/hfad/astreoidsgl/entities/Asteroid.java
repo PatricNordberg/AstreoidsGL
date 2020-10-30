@@ -1,4 +1,5 @@
 package com.hfad.astreoidsgl.entities;
+
 import android.opengl.GLES20;
 
 import com.hfad.astreoidsgl.GameConfig;
@@ -11,27 +12,29 @@ public class Asteroid extends GLEntity {
     private static final float MIN_VEL = -14f;
 
 
-    public Asteroid(final float x, final float y, int points){
+    public Asteroid(final float x, final float y, int points) {
 
-        if(points < 3){ points = 3; } //triangles or more, please. :)
+        if (points < 3) {
+            points = 3;
+        } //triangles or more, please. :)
         _x = x;
         _y = y;
         //randomAstroid();
         selectAsteroidSize();
-        final double radius = _width*0.5;
+        final double radius = _width * 0.5;
         final float[] verts = Mesh.generateLinePolygon(points, radius);
         _mesh = new Mesh(verts, GLES20.GL_LINES);
         _mesh.setWidthHeight(_width, _height);
     }
 
-    //random astroids generator
+    //random asteroids generator
     /*
-    private void randomAstroid() {
+    private void randomAsteroid() {
         int r = new Random().nextInt(3);
         switch (r) {
-            case 0: largeAstroid();
+            case 0: largeAsteroid();
             break;
-            case 1:  mediumAstroid();
+            case 1:  mediumAsteroid();
                 break;
             case 2: smallAsteroid();
                 break;
@@ -42,17 +45,17 @@ public class Asteroid extends GLEntity {
      */
 
     private void selectAsteroidSize() {
-    int i = _game._asteroidsToAdd.size();
-            if (i < 4){
-                largeAsteroid();
-            }
-            if (i >= 4 && i<8 || _game.initMediumAsteroid){
-                mediumAsteroid();
-            }
-            if (i >= 8 && i <= 10 || _game.initSmallAsteroid){
-                smallAsteroid();
-            }
+        int i = _game._asteroidsToAdd.size();
+        if (i < 4) {
+            largeAsteroid();
         }
+        if (i >= 4 && i < 8 || _game.initMediumAsteroid) {
+            mediumAsteroid();
+        }
+        if (i >= 8 && i <= 10 || _game.initSmallAsteroid) {
+            smallAsteroid();
+        }
+    }
 
 
     private void largeAsteroid() {
@@ -83,16 +86,16 @@ public class Asteroid extends GLEntity {
         HUD._laserHitAsteroid = true;
         _game._jukebox.play(GameConfig.EXPLOSION);
 
-        if (a._width == 12){
+        if (a._width == 12) {
             GameConfig._score++;
             _game.largeAsteroidExploding(a);
         }
-        if (a._width == 8){
-            GameConfig._score+=2;
+        if (a._width == 8) {
+            GameConfig._score += 2;
             _game.mediumAsteroidExploding(a);
         }
-        if (a._width == 4){
-            GameConfig._score+=3;
+        if (a._width == 4) {
+            GameConfig._score += 3;
             _game.smallAsteroidExploding(a);
         }
 

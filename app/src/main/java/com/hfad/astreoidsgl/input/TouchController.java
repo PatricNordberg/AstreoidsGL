@@ -6,11 +6,10 @@ import android.view.View;
 
 import com.hfad.astreoidsgl.R;
 
-//Todo: remove keypad_left and right?
-public class TouchController extends InputManager implements View.OnTouchListener{
-    public TouchController(View view){
-      //  view.findViewById(R.id.keypad_left).setOnTouchListener(this);
-       // view.findViewById(R.id.keypad_right).setOnTouchListener(this);
+public class TouchController extends InputManager implements View.OnTouchListener {
+    public TouchController(View view) {
+        //  view.findViewById(R.id.keypad_left).setOnTouchListener(this);
+        // view.findViewById(R.id.keypad_right).setOnTouchListener(this);
         view.findViewById(R.id.keypad_a).setOnTouchListener(this);
         view.findViewById(R.id.keypad_b).setOnTouchListener(this);
         view.findViewById(R.id.keypad_hyperspace).setOnTouchListener(this);
@@ -21,7 +20,7 @@ public class TouchController extends InputManager implements View.OnTouchListene
     public boolean onTouch(final View v, final MotionEvent event) {
         final int action = event.getActionMasked();
         final int id = v.getId();
-        if(action == MotionEvent.ACTION_DOWN){
+        if (action == MotionEvent.ACTION_DOWN) {
             // User started pressing a key
            /* if (id == R.id.keypad_left) {
                 _horizontalFactor -= 1;
@@ -39,7 +38,7 @@ public class TouchController extends InputManager implements View.OnTouchListene
             if (id == R.id.keypad_hyperspace) {
                 _pressingHyperspace = true;
             }
-        } else if(action == MotionEvent.ACTION_UP) {
+        } else if (action == MotionEvent.ACTION_UP) {
             // User released a key
             /*
             if (id == R.id.keypad_left) {

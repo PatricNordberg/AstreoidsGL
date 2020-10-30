@@ -27,86 +27,80 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 
+@SuppressWarnings({"FieldCanBeLocal", "unchecked", "SameParameterValue", "rawtypes", "SpellCheckingInspection"})
 public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
-    public int levelNumber = 1;
-
+    public static final long SECOND_IN_NANOSECONDS = 1000000000;
+    public static final long MILLISECOND_IN_NANOSECONDS = 1000000;
+    public static final float NANOSECONDS_TO_SECONDS = 1.0f / SECOND_IN_NANOSECONDS;
     private static final String TAG = "";
-    private Border _border;
-    protected Player _player = null;
-    protected Asteroid _asteroid = null;
-    public Jukebox _jukebox = null;
-    private HUD _hud = null;
-    private BackgroundMusic _backgroundMusic = null;
-    // protected ArrayList<Text> _texts = new ArrayList<>();
-
-    GameConfig _config = new GameConfig();
-    public InputManager _inputs = new InputManager(); //empty but valid default
-
     //storage
-    private static final int BULLET_COUNT = (int) (Bullet.TIME_TO_LIVE / Player.TIME_BETWEEN_SHOTS) + 1;
-    Bullet[] _bullets = new Bullet[BULLET_COUNT];
-    private static int STAR_COUNT = 100;
-    public static int ASTEROID_COUNT = 10;
-    public static int PARTICLE_COUNT = 20;
-
-    private ArrayList<Star> _stars = new ArrayList();
-    public ArrayList<Asteroid> _asteroids = new ArrayList();
-    public ArrayList<Asteroid> _shatteredAsteroids = new ArrayList();
-    public ArrayList<Asteroid> _asteroidsToRemove = new ArrayList();
-    public ArrayList<Asteroid> _shatteredAsteroidsToRemove = new ArrayList();
-    public ArrayList<Asteroid> _asteroidsToAdd = new ArrayList();
-    public ArrayList<Asteroid> _shatteredAsteroidsToAdd = new ArrayList();
-    public ArrayList<Particles> _smallParticles = new ArrayList();
-    public ArrayList<Particles> _mediumParticles = new ArrayList();
-    public ArrayList<Particles> _largeParticles = new ArrayList();
-
-
-    //private static final float BG_COLOR[] = {135/255f, 206/255f, 235/255f, 1f}; //RGBA
-    private static final float[] BG_COLOR = {0 / 255f, 0 / 255f, 0 / 255f, 1f}; //RGBA
-
-    private static DecimalFormat df = new DecimalFormat("0");
-    public static long SECOND_IN_NANOSECONDS = 1000000000;
-    public static long MILLISECOND_IN_NANOSECONDS = 1000000;
+    private static final int BULLET_COUNT = (int) (GameConfig.TIME_TO_LIVE / GameConfig.TIME_BETWEEN_SHOTS) + 1;
     public static float NANOSECONDS_TO_MILLISECONDS = 1.0f / MILLISECOND_IN_NANOSECONDS;
-    public static float NANOSECONDS_TO_SECONDS = 1.0f / SECOND_IN_NANOSECONDS;
-
-    final double dt = 0.01;
-    double accumulator = 0.0;
-    double currentTime = System.nanoTime() * NANOSECONDS_TO_SECONDS;
-
-    static float METERS_TO_SHOW_X = GameConfig.WORLD_WIDTH; //160m x 90m, the entire game world in view
-    static float METERS_TO_SHOW_Y = GameConfig.WORLD_HEIGHT; //TODO: calculate to match screen aspect ratio
-
+    private static DecimalFormat df = new DecimalFormat("0");
+    public final int levelNumber = 1;
+    public final ArrayList<Asteroid> _asteroids = new ArrayList();
+    public final ArrayList<Asteroid> _shatteredAsteroids = new ArrayList();
+    public final ArrayList<Asteroid> _asteroidsToRemove = new ArrayList();
+    public final ArrayList<Asteroid> _shatteredAsteroidsToRemove = new ArrayList();
+    public final ArrayList<Asteroid> _asteroidsToAdd = new ArrayList();
+    public final ArrayList<Asteroid> _shatteredAsteroidsToAdd = new ArrayList();
+    public final ArrayList<Particles> _smallParticles = new ArrayList();
+    public final ArrayList<Particles> _mediumParticles = new ArrayList();
+    public final ArrayList<Particles> _largeParticles = new ArrayList();
     // Create the projection Matrix. This is used to project the scene onto a 2D viewport.
-    protected float[] _viewportMatrix = new float[4 * 4]; //In essence, it is our our Camera
-
-    public volatile float mAngle;
-
+    protected final float[] _viewportMatrix = new float[4 * 4]; //In essence, it is our our Camera
+    final Bullet[] _bullets = new Bullet[BULLET_COUNT];
+    final double dt = 0.01;
+    final int minAsteroid = 3;
+    final int maxAsteroid = 11;
+    final Random r = new Random();
+    private final ArrayList<Star> _stars = new ArrayList();
     private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
-    private float previousX;
-    private float previousY;
-    FPSCounter _fpsCounter = null;
-    private boolean _explosion;
+    public Jukebox _jukebox = null;
+    public InputManager _inputs = new InputManager(); //empty but valid default
+    public volatile float mAngle;
     public boolean initSmallAsteroid;
     public boolean initMediumAsteroid;
+    protected Player _player = null;
+    double accumulator = 0.0;
+    double currentTime = System.nanoTime() * NANOSECONDS_TO_SECONDS;
+    FPSCounter _fpsCounter = null;
+    private Border _border;
+    private HUD _hud = null;
+    private BackgroundMusic _backgroundMusic = null;
+    private float previousX;
+    private float previousY;
+    private boolean _explosion;
     private boolean showParticles;
+
+
+    //private MyGLRenderer _renderer = null;
     private long timeLarge;
     private long timeMedium;
     private long timeSmall;
 
 
-    //private MyGLRenderer _renderer = null;
-
     public Game(Context context) {
         super(context);
         init();
     }
-
     public Game(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
+    public static int loadShader(int type, String shaderCode) {
+
+        // create a vertex shader type (GLES20.GL_VERTEX_SHADER)
+        // or a fragment shader type (GLES20.GL_FRAGMENT_SHADER)
+        int shader = GLES20.glCreateShader(type);
+
+        // add the source code to the shader and compile it
+        GLES20.glShaderSource(shader, shaderCode);
+        GLES20.glCompileShader(shader);
+
+        return shader;
+    }
 
     private void init() {
         _fpsCounter = new FPSCounter();
@@ -116,7 +110,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         // we always re-create the OpenGL context in onSurfaceCreated, so we're safe either way.
         _jukebox = new Jukebox(getContext());
         _backgroundMusic = new BackgroundMusic(getContext());
-        _backgroundMusic.loadBackgroundMusic(R.raw.background_music); //todo: turn on bg music
+        _backgroundMusic.loadBackgroundMusic(R.raw.background_music);
 
         _hud = new HUD(this.getContext(), _player, this);
 
@@ -127,16 +121,11 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         setRenderer(this);
     }
 
-
-    final int minAsteroid = 3;
-    final int maxAsteroid = 11;
-    Random r = new Random();
-
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         GLManager.buildProgram(); //compile, link and upload our GL program
         //GLES20.glClearColor(BG_COLOR[0], BG_COLOR[1], BG_COLOR[2], BG_COLOR[3]); //set clear color
-        GLES20.glClearColor(BG_COLOR[0], BG_COLOR[1], BG_COLOR[2], BG_COLOR[3]); //set clear color
+        GLES20.glClearColor(GameConfig.BG_COLOR[0], GameConfig.BG_COLOR[1], GameConfig.BG_COLOR[2], GameConfig.BG_COLOR[3]); //set clear color
         // center the player in the world.
         _player = new Player(GameConfig.WORLD_WIDTH / 2, GameConfig.WORLD_HEIGHT / 2); //y == 10
         // spawn Border at the center of the world now!
@@ -144,11 +133,11 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         _jukebox.play(GameConfig.START_GAME);
 
 
-        for (int i = 0; i < STAR_COUNT; i++) {
+        for (int i = 0; i < GameConfig.STAR_COUNT; i++) {
             _stars.add(new Star(r.nextInt((int) GameConfig.WORLD_WIDTH), r.nextInt((int) GameConfig.WORLD_HEIGHT)));
         }
 
-        for (int i = 0; i < ASTEROID_COUNT; i++) {
+        for (int i = 0; i < GameConfig.ASTEROID_COUNT; i++) {
             try {
                 _asteroidsToAdd.add(new Asteroid(r.nextInt((int) GameConfig.WORLD_WIDTH), r.nextInt((int) GameConfig.WORLD_HEIGHT), r.nextInt((maxAsteroid - minAsteroid) + 1) + minAsteroid));
 
@@ -169,6 +158,8 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         Log.d(TAG, "surfaceDestroyed!");
 
     }
+    //trying a fixed time-step with accumulator, courtesy of
+//   https://gafferongames.com/post/fix_your_timestep/
 
     @Override
     public void onDrawFrame(final GL10 unused) {
@@ -176,9 +167,6 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         update(); //TODO: move updates away from the render thread...
         render();
     }
-    //trying a fixed time-step with accumulator, courtesy of
-//   https://gafferongames.com/post/fix_your_timestep/
-
 
     private void update() {
         final double newTime = System.nanoTime() * NANOSECONDS_TO_SECONDS;
@@ -231,15 +219,14 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         }
     }
 
-
     private void render() {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT); //clear buffer to background color
         //setup a projection matrix by passing in the range of the game world that will be mapped by OpenGL to the screen.
         //TODO: encapsulate this in a Camera-class, let it "position" itself relative to an entity
         final int offset = 0;
         final float left = 0;
-        final float right = METERS_TO_SHOW_X;
-        final float bottom = METERS_TO_SHOW_Y;
+        final float right = GameConfig.METERS_TO_SHOW_X;
+        final float bottom = GameConfig.METERS_TO_SHOW_Y;
         final float top = 0;
         final float near = 0f;
         final float far = 1f;
@@ -274,7 +261,6 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         _hud.renderHUD(this);
 
     }
-
 
     private void updateParticles() {
         double getTime = System.currentTimeMillis();
@@ -313,21 +299,6 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
         }
     }
-
-
-    public static int loadShader(int type, String shaderCode) {
-
-        // create a vertex shader type (GLES20.GL_VERTEX_SHADER)
-        // or a fragment shader type (GLES20.GL_FRAGMENT_SHADER)
-        int shader = GLES20.glCreateShader(type);
-
-        // add the source code to the shader and compile it
-        GLES20.glShaderSource(shader, shaderCode);
-        GLES20.glCompileShader(shader);
-
-        return shader;
-    }
-
 
     public void setControls(final InputManager input) {
         _inputs.onStart();
@@ -448,7 +419,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
     public void smallAsteroidExploding(Asteroid a) {
         timeSmall = System.currentTimeMillis();
-        for (int i = 0; i < PARTICLE_COUNT; i++) {
+        for (int i = 0; i < GameConfig.PARTICLE_COUNT; i++) {
             _smallParticles.add(new Particles(a._x, a._y, 0));
         }
     }
@@ -456,7 +427,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     public void mediumAsteroidExploding(Asteroid a) {
         initSmallAsteroid = true;
         timeMedium = System.currentTimeMillis();
-        for (int i = 0; i < PARTICLE_COUNT; i++) {
+        for (int i = 0; i < GameConfig.PARTICLE_COUNT; i++) {
             _mediumParticles.add(new Particles(a._x, a._y, 0));
         }
         int i = 0;
@@ -477,7 +448,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     public void largeAsteroidExploding(Asteroid a) {
         initMediumAsteroid = true;
         timeLarge = System.currentTimeMillis();
-        for (int i = 0; i < PARTICLE_COUNT; i++) {
+        for (int i = 0; i < GameConfig.PARTICLE_COUNT; i++) {
             _largeParticles.add(new Particles(a._x, a._y, 0));
         }
         int i = 0;
