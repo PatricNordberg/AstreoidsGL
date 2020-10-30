@@ -7,6 +7,7 @@ import com.hfad.astreoidsgl.GLManager;
 import com.hfad.astreoidsgl.Game;
 import com.hfad.astreoidsgl.GameConfig;
 import com.hfad.astreoidsgl.Mesh;
+import com.hfad.astreoidsgl.Utils;
 
 import java.util.Objects;
 
@@ -147,7 +148,7 @@ public class GLEntity {
 
     public void setColors(final float[] colors){
         Objects.requireNonNull(colors);
-        assert(colors.length >= 4);
+        Utils.require(colors.length >= 4);
         setColors(colors[0], colors[1], colors[2], colors[3]);
     }
     public void setColors(final float r, final float g, final float b, final float a){

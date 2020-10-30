@@ -92,7 +92,7 @@ public class Mesh {
     }
 
     public void setDrawmode(int drawMode){
-        assert(drawMode == GLES20.GL_TRIANGLES
+        Utils.require(drawMode == GLES20.GL_TRIANGLES
                 || drawMode == GLES20.GL_LINES
                 || drawMode == GLES20.GL_POINTS);
         _drawMode = drawMode;
@@ -119,7 +119,7 @@ public class Mesh {
     public void flipZ(){ scaleZ(-1.0); }
 
     public void flip(final int axis){
-        assert(axis == X || axis == Y || axis == Z);
+        Utils.require(axis == X || axis == Y || axis == Z);
         _vertexBuffer.position(0);
         for(int i = 0; i < _vertexCount; i++){
             final int index = i*COORDS_PER_VERTEX + axis;

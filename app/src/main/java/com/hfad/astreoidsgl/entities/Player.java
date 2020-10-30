@@ -34,7 +34,7 @@ public class Player extends GLEntity {
         _y = y;
         _width = 4f; //TODO: gameplay values!
         _height = 8f;
-        float vertices[] = { // in counterclockwise order:
+        float[] vertices = { // in counterclockwise order:
                 0.0f,  0.5f, 0.0f, 	// top
                 -0.5f, -0.5f, 0.0f,	// bottom left
                 0.5f, -0.5f, 0.0f  	// bottom right

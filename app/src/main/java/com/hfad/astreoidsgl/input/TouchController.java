@@ -1,5 +1,6 @@
 package com.hfad.astreoidsgl.input;
 
+import android.annotation.SuppressLint;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -15,6 +16,7 @@ public class TouchController extends InputManager implements View.OnTouchListene
         view.findViewById(R.id.keypad_hyperspace).setOnTouchListener(this);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(final View v, final MotionEvent event) {
         final int action = event.getActionMasked();

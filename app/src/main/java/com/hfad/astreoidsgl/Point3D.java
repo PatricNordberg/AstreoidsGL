@@ -20,7 +20,7 @@ public class Point3D {
     }
 
     public void set(final float[] p){
-        assert(p.length == 3);
+        Utils.require(p.length == 3);
         _x = p[0];
         _y = p[1];
         _z = p[2];

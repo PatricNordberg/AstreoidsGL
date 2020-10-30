@@ -34,11 +34,7 @@ public class Star extends GLEntity {
         int n = r.nextInt(1000);
         if(n == 0){
 // Switch on or off
-            if(_showIt){
-                _showIt = false;
-            }else{
-                _showIt = true;
-            }
+            _showIt = !_showIt;
         }
         super.update(dt);
     }

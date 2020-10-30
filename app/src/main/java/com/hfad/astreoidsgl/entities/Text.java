@@ -9,8 +9,8 @@ import com.hfad.astreoidsgl.entities.GLEntity;
 
 public class Text extends GLEntity {
     public static final GLPixelFont FONT = new GLPixelFont();
-    public static float GLYPH_WIDTH = FONT.WIDTH;
-    public static float GLYPH_HEIGHT = FONT.HEIGHT;
+    public static float GLYPH_WIDTH = GLPixelFont.WIDTH;
+    public static float GLYPH_HEIGHT = GLPixelFont.HEIGHT;
     public static float GLYPH_SPACING = 0f;
 
     Mesh[] _meshes = null;

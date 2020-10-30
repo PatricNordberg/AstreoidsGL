@@ -2,6 +2,7 @@ package com.hfad.astreoidsgl;
 
 import android.graphics.PointF;
 
+import com.hfad.astreoidsgl.Utils;
 import com.hfad.astreoidsgl.entities.GLEntity;
 
 public class CollisionDetection {
@@ -25,10 +26,7 @@ public class CollisionDetection {
 
         // if the sum of the three areas equals the original we're inside the triangle.
         // we avoid equality comparisons on float by checking "larger than".
-        if((area1 + area2 + area3) > triangleArea){
-            return false;
-        }
-        return true;
+        return !((area1 + area2 + area3) > triangleArea);
     }
     public static boolean areBoundingSpheresOverlapping(final GLEntity a, final GLEntity b) {
         final float dx = a.centerX()-b.centerX(); //delta x
@@ -43,7 +41,7 @@ public class CollisionDetection {
         int next = 0;
         for (int current = 0; current < count; current++) {
             next = current+1;
-            if (next == count){ next = 0; };
+            if (next == count){ next = 0; }
             final PointF segmentStart = polyA[current]; //get a line segment from polyA
             final PointF segmentEnd = polyA[next];
             if (polygonVsSegment(polyB, segmentStart, segmentEnd)){ //compare the segment to all segments in polyB

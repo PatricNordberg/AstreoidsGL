@@ -24,15 +24,16 @@ public class HUD extends SurfaceView {
 
     String _textHealth = String.format(getResources().getString(R.string.playerHealth), GameConfig._health);
     String _textScore = String.format(getResources().getString(R.string.score), GameConfig._score);
-    String _textLevel = "Level 1";
+    String _textLevel = "";
     String _fps = "";
 
 
     //final float _halfScreenWidth = (float)GameConfig.STAGE_WIDTH/2; //to get the middle ish.
 
-    public HUD(Context context, Player _player) {
+    public HUD(Context context, Player _player, Game game) {
         super(context);
         this._player = _player;
+        _textLevel = "Level: " + game.levelNumber;
 
         _texts.add(0, new Text(_textHealth, 8, 8));
         _texts.add(1, new Text(_textScore, 8, 16));

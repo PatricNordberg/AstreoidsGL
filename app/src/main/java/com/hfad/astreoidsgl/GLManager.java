@@ -1,5 +1,6 @@
 package com.hfad.astreoidsgl;
 
+import android.annotation.SuppressLint;
 import android.opengl.GLES20;
 import android.util.Log;
 
@@ -13,7 +14,7 @@ public class GLManager {
     private static int glProgramHandle; //handle to the compiled shader program
     private static int colorUniformHandle; //handle to the color setting
     private static int positionAttributeHandle; //handle to the vertex position setting
-    float vertices[] = { // in counterclockwise order:
+    float[] vertices = { // in counterclockwise order:
             0.0f, 0.5f, 0.0f,        // top
             -0.5f, -0.5f, 0.0f,        // bottom left
             0.5f, -0.5f, 0.0f        // bottom right
@@ -49,7 +50,7 @@ public class GLManager {
     }
 
     private static void drawMesh(final int drawMode, final int vertexCount) {
-        assert (drawMode == GLES20.GL_TRIANGLES
+        Utils.require (drawMode == GLES20.GL_TRIANGLES
                 || drawMode == GLES20.GL_LINES
                 || drawMode == GLES20.GL_POINTS);
         // draw the previously uploaded vertices
@@ -77,8 +78,9 @@ public class GLManager {
                     "}\n";
 
 
+    @SuppressLint("Assert")
     private static int compileShader(final int type, final String shaderCode) {
-        assert (type == GLES20.GL_VERTEX_SHADER || type == GLES20.GL_FRAGMENT_SHADER);
+        Utils.require (type == GLES20.GL_VERTEX_SHADER || type == GLES20.GL_FRAGMENT_SHADER);
         final int handle = GLES20.glCreateShader(type); // Create a shader object and store its handle
         GLES20.glShaderSource(handle, shaderCode); // Pass in the code
         GLES20.glCompileShader(handle); // then compile the shader
@@ -135,7 +137,7 @@ public class GLManager {
     }
 
     public void setActive(boolean isActive) {
-        this.isActive = isActive;
+        GLManager.isActive = isActive;
 
 
     }

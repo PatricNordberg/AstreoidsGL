@@ -13,10 +13,14 @@ public class InputManager {
     protected final int _maxDistance = Utils.dpToPx(1); //48dp = minimum hit target. maxDistance is in pixels.
     //"was just pressed" and "was just released" - bullets, one per press
 
-    public void onStart() {};
-    public void onStop() {};
-    public void onPause() {};
-    public void onResume() {};
+    public void onStart() {}
+
+    public void onStop() {}
+
+    public void onPause() {}
+
+    public void onResume() {}
+
     public void update(float dt) {
     }
 
