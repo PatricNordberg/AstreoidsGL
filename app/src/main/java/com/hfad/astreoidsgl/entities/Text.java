@@ -13,7 +13,7 @@ public class Text extends GLEntity {
     public static final float GLYPH_HEIGHT = GLPixelFont.HEIGHT;
     public static final float GLYPH_SPACING = 0f;
     Mesh[] _meshes = null;
-    private float setTextSize = 2f;
+    private final float setTextSize = 2f;
     private float _spacing = GLYPH_SPACING; //spacing between characters
     private float _glyphWidth = GLYPH_WIDTH;
     private float _glyphHeight = GLYPH_HEIGHT;

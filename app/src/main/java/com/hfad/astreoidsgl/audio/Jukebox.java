@@ -76,5 +76,8 @@ public class Jukebox {
         _soundPool = null;
     }
 
+    public void onPause() {
+    }
+
 
 }

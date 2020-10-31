@@ -7,6 +7,7 @@ import com.hfad.astreoidsgl.HUD;
 import com.hfad.astreoidsgl.Mesh;
 import com.hfad.astreoidsgl.Utils;
 
+@SuppressWarnings("SuspiciousNameCombination")
 public class Asteroid extends GLEntity {
     private static final float MAX_VEL = 14f;
     private static final float MIN_VEL = -14f;

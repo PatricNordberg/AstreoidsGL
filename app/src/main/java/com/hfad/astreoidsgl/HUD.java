@@ -35,7 +35,7 @@ public class HUD extends SurfaceView {
 
         _texts.add(0, new Text(_textHealth, 8, 8));
         _texts.add(1, new Text(_textScore, 8, 16));
-        _texts.add(2, new Text(_textLevel, 8, 24));
+        _texts.add(2, new Text(_textLevel, 8, 130));
         _texts.add(3, new Text(_fps, 8, 32));
 
     }
@@ -56,7 +56,7 @@ public class HUD extends SurfaceView {
             _laserHitAsteroid = false;
         }
         _fps = game._fpsCounter.get_fps();
-        _texts.set(3, new Text("FPS" + _fps, 8, 32));
+        _texts.set(3, new Text("FPS" + _fps, 205, 8));
 
         for (final Text t : _texts) {
             t.render(game._viewportMatrix);

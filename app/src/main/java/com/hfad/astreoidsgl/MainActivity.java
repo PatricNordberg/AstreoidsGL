@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -35,8 +36,31 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        _game.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        _game.setVisibility(View.GONE);
+        super.onPause();
+        _game.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        _game.onDestroy();
+        super.onDestroy();
+
+    }
+
+    @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && _game.getVisibility() == View.GONE) {
+            _game.setVisibility(View.VISIBLE);
+        }
         if (!hasFocus) {
             return;
         }

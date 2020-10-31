@@ -6,7 +6,9 @@ public class GameConfig {
     public static final float WORLD_HEIGHT = 140;
     //Asteroid
     public static final int ASTEROID_COUNT = 10;
-    public static final int PARTICLE_COUNT = 20;
+    public static final int SMALL_PARTICLE_COUNT = 20;
+    public static final int MEDIUM_PARTICLE_COUNT = 60;
+    public static final int LARGE_PARTICLE_COUNT = 100;
     //Bullet
     public static final float SPEED = 120f;
     public static final float TIME_TO_LIVE = 1.5f; //seconds

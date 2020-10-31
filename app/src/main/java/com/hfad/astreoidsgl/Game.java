@@ -7,6 +7,7 @@ import android.opengl.Matrix;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import android.view.View;
 
 import com.hfad.astreoidsgl.audio.BackgroundMusic;
 import com.hfad.astreoidsgl.audio.Jukebox;
@@ -70,8 +71,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     private BackgroundMusic _backgroundMusic = null;
     private float previousX;
     private float previousY;
-    private boolean _explosion;
-    private boolean showParticles;
+    private volatile boolean _isRunning = false;
 
 
     //private MyGLRenderer _renderer = null;
@@ -164,8 +164,8 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(final GL10 unused) {
         _fpsCounter.logFrame();
-        update(); //TODO: move updates away from the render thread...
         render();
+        update();
     }
 
     private void update() {
@@ -419,7 +419,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
     public void smallAsteroidExploding(Asteroid a) {
         timeSmall = System.currentTimeMillis();
-        for (int i = 0; i < GameConfig.PARTICLE_COUNT; i++) {
+        for (int i = 0; i < GameConfig.SMALL_PARTICLE_COUNT; i++) {
             _smallParticles.add(new Particles(a._x, a._y, 0));
         }
     }
@@ -427,7 +427,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     public void mediumAsteroidExploding(Asteroid a) {
         initSmallAsteroid = true;
         timeMedium = System.currentTimeMillis();
-        for (int i = 0; i < GameConfig.PARTICLE_COUNT; i++) {
+        for (int i = 0; i < GameConfig.MEDIUM_PARTICLE_COUNT; i++) {
             _mediumParticles.add(new Particles(a._x, a._y, 0));
         }
         int i = 0;
@@ -448,7 +448,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     public void largeAsteroidExploding(Asteroid a) {
         initMediumAsteroid = true;
         timeLarge = System.currentTimeMillis();
-        for (int i = 0; i < GameConfig.PARTICLE_COUNT; i++) {
+        for (int i = 0; i < GameConfig.LARGE_PARTICLE_COUNT; i++) {
             _largeParticles.add(new Particles(a._x, a._y, 0));
         }
         int i = 0;
@@ -466,4 +466,35 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
 
     }
+
+    //below is executing on UI THREAD
+
+    public void onResume() {
+        Log.d(TAG, "onResume");
+        _inputs.onResume();
+        _backgroundMusic.onResume();
+        //todo: resume GLSurfaceView
+    }
+
+   public void onPause() {
+        Log.d(TAG, "onPause");
+        _inputs.onPause();
+        _backgroundMusic.onPause();
+       //todo: pause GLSurfaceView
+
+    }
+
+
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        _jukebox.destroy();
+        _backgroundMusic.destroy();
+        _inputs = null;
+        GLEntity._game = null;
+    }
+
+
+
+
+
 }

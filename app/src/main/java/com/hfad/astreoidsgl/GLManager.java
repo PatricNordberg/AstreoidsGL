@@ -127,13 +127,5 @@ public class GLManager {
         checkGLError("setModelViewProjection");
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
 
-    public void setActive(boolean isActive) {
-        GLManager.isActive = isActive;
-
-
-    }
 }
