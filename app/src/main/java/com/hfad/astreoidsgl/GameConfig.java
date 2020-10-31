@@ -37,7 +37,10 @@ public class GameConfig {
     public static int BOOST = 0;
     public static int HYPERSPACE = 0;
     //Player
-    public static int _health = 3;
-    public static int _score = 0;
+    public static int STARTING_HEALTH = 3;
+    public static int STARTING_SCORE = 0;
+    public static float _playerHeight = 8f;
+    public static float _playerWidth =4f ;
+
 
 }

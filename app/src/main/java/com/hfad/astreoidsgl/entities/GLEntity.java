@@ -197,4 +197,8 @@ public class GLEntity {
         _y = bottomEdgePosition - _mesh.bottom();
     }
 
+    public void respawn() {
+
+    }
+
 }

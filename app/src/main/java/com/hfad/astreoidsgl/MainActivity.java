@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,7 +12,7 @@ import com.hfad.astreoidsgl.input.InputManager;
 import com.hfad.astreoidsgl.input.TouchController;
 import com.hfad.astreoidsgl.input.VirtualJoystick;
 
-@SuppressWarnings("FieldCanBeLocal")
+
 public class MainActivity extends AppCompatActivity {
     private Game _game = null;
 

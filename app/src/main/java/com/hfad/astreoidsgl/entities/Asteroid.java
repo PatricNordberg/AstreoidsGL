@@ -88,15 +88,15 @@ public class Asteroid extends GLEntity {
         _game._jukebox.play(GameConfig.EXPLOSION);
 
         if (a._width == 12) {
-            GameConfig._score++;
+            _game._player._score++;
             _game.largeAsteroidExploding(a);
         }
         if (a._width == 8) {
-            GameConfig._score += 2;
+            _game._player._score += 2;
             _game.mediumAsteroidExploding(a);
         }
         if (a._width == 4) {
-            GameConfig._score += 3;
+            _game._player._score += 3;
             _game.smallAsteroidExploding(a);
         }
 

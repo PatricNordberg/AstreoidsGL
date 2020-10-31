@@ -13,22 +13,27 @@ import java.util.Random;
 
 import static com.hfad.astreoidsgl.CollisionDetection.areBoundingSpheresOverlapping;
 
-@SuppressWarnings("SpellCheckingInspection")
+@SuppressWarnings({"SpellCheckingInspection", "UnusedAssignment"})
 public class Player extends GLEntity {
 
     private static final String TAG = "Player";
     final Random r = new Random();
+    public int _score;
     private float _bulletCooldown = 0;
     private float _hyperspaceCooldown = 0;
     private float _boostCooldown = 0;
+    public boolean _isDead = false;
+    public int _health = 0;
 
 
     public Player(final float x, final float y) {
         super();
+        _health = GameConfig.STARTING_HEALTH;
+        _score = GameConfig.STARTING_SCORE;
         _x = x;
         _y = y;
-        _width = 4f; //TODO: gameplay values!
-        _height = 8f;
+        _width = GameConfig._playerWidth;
+        _height = GameConfig._playerHeight;
         float[] vertices = { // in counterclockwise order:
                 0.0f, 0.5f, 0.0f,    // top
                 -0.5f, -0.5f, 0.0f,    // bottom left
@@ -43,13 +48,16 @@ public class Player extends GLEntity {
     @Override
     public void update(double dt) {
         _rotation += (dt * GameConfig.ROTATION_VELOCITY) * _game._inputs._horizontalFactor;
+        _velX *= GameConfig.DRAG;
+        _velY *= GameConfig.DRAG;
+
         _boostCooldown -= dt;
         if (_game._inputs._pressingBoost && _boostCooldown <= 0) {
             final float theta = _rotation * (float) Utils.TO_RAD;
             _velX += (float) Math.sin(theta) * GameConfig.THRUST;
             _velY -= (float) Math.cos(theta) * GameConfig.THRUST;
-            _game._jukebox.play(GameConfig.BOOST); //todo; fps drop, implement cooldown?
-            //todo: implement effects for boost - fire - bullet åt andra håller bara
+            _game._jukebox.play(GameConfig.BOOST);
+            //todo: implement effects for boost - fire - like bullet but in the other y-direction
             _boostCooldown = GameConfig.TIME_BETWEEN_BOOST;
         }
 
@@ -61,8 +69,6 @@ public class Player extends GLEntity {
             _hyperspaceCooldown = GameConfig.TIME_BETWEEN_HYPERSPACE;
         }
 
-        _velX *= GameConfig.DRAG;
-        _velY *= GameConfig.DRAG;
         _bulletCooldown -= dt;
         if (_game._inputs._pressingLaser && _bulletCooldown <= 0) {
             setColors(1, 0, 1, 1);
@@ -99,7 +105,17 @@ public class Player extends GLEntity {
     public void onHitAsteroid() {
         HUD._playerIsHit = true;
         _game._jukebox.play(GameConfig.HURT);
-        GameConfig._health--;
+        _health--;
+        if (_health == 0) {
+            _isDead = true;
+        }
+    }
+
+    @Override
+    public void respawn() {
+        _health = GameConfig.STARTING_HEALTH;
+        _score = GameConfig.STARTING_SCORE;
+        _isDead = false;
     }
 
 }

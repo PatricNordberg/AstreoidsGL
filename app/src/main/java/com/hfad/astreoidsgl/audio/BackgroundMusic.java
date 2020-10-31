@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import com.hfad.astreoidsgl.GameConfig;
 
 
-@SuppressWarnings("FieldCanBeLocal")
 public class BackgroundMusic {
     @SuppressWarnings("UnusedAssignment")
     Context _context = null;

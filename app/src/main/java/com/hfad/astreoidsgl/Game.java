@@ -7,7 +7,6 @@ import android.opengl.Matrix;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import android.view.View;
 
 import com.hfad.astreoidsgl.audio.BackgroundMusic;
 import com.hfad.astreoidsgl.audio.Jukebox;
@@ -28,7 +27,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 
-@SuppressWarnings({"FieldCanBeLocal", "unchecked", "SameParameterValue", "rawtypes", "SpellCheckingInspection"})
+@SuppressWarnings({"unchecked", "SameParameterValue", "rawtypes", "SpellCheckingInspection"})
 public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     public static final long SECOND_IN_NANOSECONDS = 1000000000;
     public static final long MILLISECOND_IN_NANOSECONDS = 1000000;
@@ -62,7 +61,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     public volatile float mAngle;
     public boolean initSmallAsteroid;
     public boolean initMediumAsteroid;
-    protected Player _player = null;
+    public Player _player = null;
     double accumulator = 0.0;
     double currentTime = System.nanoTime() * NANOSECONDS_TO_SECONDS;
     FPSCounter _fpsCounter = null;
@@ -78,6 +77,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     private long timeLarge;
     private long timeMedium;
     private long timeSmall;
+    public boolean _gameOver;
 
 
     public Game(Context context) {
@@ -111,8 +111,8 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         _jukebox = new Jukebox(getContext());
         _backgroundMusic = new BackgroundMusic(getContext());
         _backgroundMusic.loadBackgroundMusic(R.raw.background_music);
-
-        _hud = new HUD(this.getContext(), _player, this);
+        spawnPlayerAndAsteroids();
+        _hud = new HUD(this.getContext(), _player, _fpsCounter, levelNumber);
 
         for (int i = 0; i < BULLET_COUNT; i++) {
             _bullets[i] = new Bullet();
@@ -127,16 +127,20 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         //GLES20.glClearColor(BG_COLOR[0], BG_COLOR[1], BG_COLOR[2], BG_COLOR[3]); //set clear color
         GLES20.glClearColor(GameConfig.BG_COLOR[0], GameConfig.BG_COLOR[1], GameConfig.BG_COLOR[2], GameConfig.BG_COLOR[3]); //set clear color
         // center the player in the world.
-        _player = new Player(GameConfig.WORLD_WIDTH / 2, GameConfig.WORLD_HEIGHT / 2); //y == 10
+
         // spawn Border at the center of the world now!
         _border = new Border(GameConfig.WORLD_WIDTH / 2, GameConfig.WORLD_HEIGHT / 2, GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT);
         _jukebox.play(GameConfig.START_GAME);
-
 
         for (int i = 0; i < GameConfig.STAR_COUNT; i++) {
             _stars.add(new Star(r.nextInt((int) GameConfig.WORLD_WIDTH), r.nextInt((int) GameConfig.WORLD_HEIGHT)));
         }
 
+    }
+
+    private void spawnPlayerAndAsteroids() {
+        //player start position
+      _player = new Player(GameConfig.WORLD_WIDTH / 2, GameConfig.WORLD_HEIGHT / 2);
         for (int i = 0; i < GameConfig.ASTEROID_COUNT; i++) {
             try {
                 _asteroidsToAdd.add(new Asteroid(r.nextInt((int) GameConfig.WORLD_WIDTH), r.nextInt((int) GameConfig.WORLD_HEIGHT), r.nextInt((maxAsteroid - minAsteroid) + 1) + minAsteroid));
@@ -172,6 +176,9 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         final double newTime = System.nanoTime() * NANOSECONDS_TO_SECONDS;
         final double frameTime = newTime - currentTime;
         currentTime = newTime;
+        if (_gameOver) {
+           restart();
+        }
         updateParticles();
 
         accumulator += frameTime;
@@ -217,6 +224,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
             addAndRemoveAsteroids();
             accumulator -= dt;
         }
+        checkGameOver();
     }
 
     private void render() {
@@ -258,7 +266,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
             }
         }
         _player.render(_viewportMatrix);
-        _hud.renderHUD(this);
+        _hud.renderHUD(_viewportMatrix, this);
 
     }
 
@@ -299,6 +307,26 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
         }
     }
+
+
+    private void checkGameOver() {
+        if (_player._isDead) {
+            _jukebox.play(GameConfig.GAME_OVER);
+            _asteroids.clear();
+            _gameOver = true;
+        }
+
+    }
+    private void restart() {
+        spawnPlayerAndAsteroids();
+        _player.respawn();
+        _hud = new HUD(this.getContext(), _player, _fpsCounter, levelNumber);
+        _jukebox.play(GameConfig.START_GAME);
+        _gameOver = false;
+    }
+
+
+
 
     public void setControls(final InputManager input) {
         _inputs.onStart();
@@ -431,6 +459,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
             _mediumParticles.add(new Particles(a._x, a._y, 0));
         }
         int i = 0;
+        //Spawn 3 smaller asteroids
         while (i < 3) {
             try {
                 _shatteredAsteroidsToAdd.add(new Asteroid(a._x, a._y, r.nextInt((maxAsteroid - minAsteroid) + 1) + minAsteroid));
@@ -452,6 +481,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
             _largeParticles.add(new Particles(a._x, a._y, 0));
         }
         int i = 0;
+        //spawn 3 medium-sized asteroids
         while (i < 3) {
             try {
                 _shatteredAsteroidsToAdd.add(new Asteroid(a._x, a._y, r.nextInt((maxAsteroid - minAsteroid) + 1) + minAsteroid));
@@ -473,7 +503,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         Log.d(TAG, "onResume");
         _inputs.onResume();
         _backgroundMusic.onResume();
-        //todo: resume GLSurfaceView
+        //todo: resume GLSurfaceView/onWindowFocusChanged?
     }
 
    public void onPause() {
