@@ -8,11 +8,10 @@ import com.hfad.astreoidsgl.Mesh;
 import com.hfad.astreoidsgl.Utils;
 
 @SuppressWarnings("SuspiciousNameCombination")
-public class Asteroid extends GLEntity {
-    private static final float MAX_VEL = 14f;
-    private static final float MIN_VEL = -14f;
+public abstract class Asteroid extends GLEntity {
 
-
+    public abstract float get_width();
+    public abstract float get_height();
     public Asteroid(final float x, final float y, int points) {
 
         if (points < 3) {
@@ -60,42 +59,42 @@ public class Asteroid extends GLEntity {
 
 
     private void largeAsteroid() {
-        _width = 12;
+        _width = GameConfig.LARGE_ASTEROID_WIDTH;
         _height = _width;
-        velocityAsteroids(1, 2);
+        velocityAsteroids(GameConfig.LARGE_ASTEROID_MIN_VEL, GameConfig.LARGE_ASTEROID_MAX_VEL);
     }
 
     private void mediumAsteroid() {
-        _width = 8;
+        _width = GameConfig.MEDIUM_ASTEROID_WIDTH;
         _height = _width;
-        velocityAsteroids(2, 4);
+        velocityAsteroids(GameConfig.MEDIUM_ASTEROID_MIN_VEL, GameConfig.MEDIUM_ASTEROID_MAX_VEL);
     }
 
     private void smallAsteroid() {
-        _width = 4;
+        _width = GameConfig.SMALL_ASTEROID_WIDTH;
         _height = _width;
-        velocityAsteroids(3, 3);
+        velocityAsteroids(GameConfig.SMALL_ASTEROID_MIN_VEL, GameConfig.SMALL_ASTEROID_MAX_VEL);
     }
 
     private void velocityAsteroids(int i, int i2) {
-        _velX = Utils.between(MIN_VEL * i, MAX_VEL * i);
-        _velY = Utils.between(MIN_VEL * i, MAX_VEL * i);
-        _velR = Utils.between(MIN_VEL * i2, MAX_VEL * i2);
+        _velX = Utils.between(GameConfig.MIN_VEL * i, GameConfig.MAX_VEL * i);
+        _velY = Utils.between(GameConfig.MIN_VEL * i, GameConfig.MAX_VEL * i);
+        _velR = Utils.between(GameConfig.MIN_VEL * i2, GameConfig.MAX_VEL * i2);
     }
 
     public void onHitLaser(Asteroid a) {
         HUD._laserHitAsteroid = true;
         _game._jukebox.play(GameConfig.EXPLOSION);
 
-        if (a._width == 12) {
+        if (a._width == GameConfig.LARGE_ASTEROID_WIDTH) {
             _game._player._score++;
             _game.largeAsteroidExploding(a);
         }
-        if (a._width == 8) {
+        if (a._width == GameConfig.MEDIUM_ASTEROID_WIDTH) {
             _game._player._score += 2;
             _game.mediumAsteroidExploding(a);
         }
-        if (a._width == 4) {
+        if (a._width == GameConfig.SMALL_ASTEROID_WIDTH) {
             _game._player._score += 3;
             _game.smallAsteroidExploding(a);
         }

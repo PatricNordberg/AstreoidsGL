@@ -33,8 +33,6 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     public static final long MILLISECOND_IN_NANOSECONDS = 1000000;
     public static final float NANOSECONDS_TO_SECONDS = 1.0f / SECOND_IN_NANOSECONDS;
     private static final String TAG = "";
-    //storage
-    private static final int BULLET_COUNT = (int) (GameConfig.TIME_TO_LIVE / GameConfig.TIME_BETWEEN_SHOTS) + 1;
     public static float NANOSECONDS_TO_MILLISECONDS = 1.0f / MILLISECOND_IN_NANOSECONDS;
     private static DecimalFormat df = new DecimalFormat("0");
     public final int levelNumber = 1;
@@ -47,15 +45,15 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     public final ArrayList<Particles> _smallParticles = new ArrayList();
     public final ArrayList<Particles> _mediumParticles = new ArrayList();
     public final ArrayList<Particles> _largeParticles = new ArrayList();
+    final Bullet[] _bullets = new Bullet[GameConfig.BULLET_COUNT];
+    private final ArrayList<Star> _stars = new ArrayList();
     // Create the projection Matrix. This is used to project the scene onto a 2D viewport.
     protected final float[] _viewportMatrix = new float[4 * 4]; //In essence, it is our our Camera
-    final Bullet[] _bullets = new Bullet[BULLET_COUNT];
+
     final double dt = 0.01;
-    final int minAsteroid = 3;
-    final int maxAsteroid = 11;
     final Random r = new Random();
-    private final ArrayList<Star> _stars = new ArrayList();
-    private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
+
+    //private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
     public Jukebox _jukebox = null;
     public InputManager _inputs = new InputManager(); //empty but valid default
     public volatile float mAngle;
@@ -84,13 +82,13 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         super(context);
         init();
     }
+
     public Game(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
     public static int loadShader(int type, String shaderCode) {
-
         // create a vertex shader type (GLES20.GL_VERTEX_SHADER)
         // or a fragment shader type (GLES20.GL_FRAGMENT_SHADER)
         int shader = GLES20.glCreateShader(type);
@@ -114,7 +112,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         spawnPlayerAndAsteroids();
         _hud = new HUD(this.getContext(), _player, _fpsCounter, levelNumber);
 
-        for (int i = 0; i < BULLET_COUNT; i++) {
+        for (int i = 0; i < GameConfig.BULLET_COUNT; i++) {
             _bullets[i] = new Bullet();
         }
 
@@ -140,10 +138,10 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
 
     private void spawnPlayerAndAsteroids() {
         //player start position
-      _player = new Player(GameConfig.WORLD_WIDTH / 2, GameConfig.WORLD_HEIGHT / 2);
+        _player = new Player(GameConfig.WORLD_WIDTH / 2, GameConfig.WORLD_HEIGHT / 2);
         for (int i = 0; i < GameConfig.ASTEROID_COUNT; i++) {
             try {
-                _asteroidsToAdd.add(new Asteroid(r.nextInt((int) GameConfig.WORLD_WIDTH), r.nextInt((int) GameConfig.WORLD_HEIGHT), r.nextInt((maxAsteroid - minAsteroid) + 1) + minAsteroid));
+                _asteroidsToAdd.add(new Asteroid(r.nextInt((int) GameConfig.WORLD_WIDTH), r.nextInt((int) GameConfig.WORLD_HEIGHT), r.nextInt((GameConfig.MAX_ASTEROID_POINTS - GameConfig.MIN_ASTEROID_POINTS) + 1) + GameConfig.MIN_ASTEROID_POINTS));
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -177,7 +175,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         final double frameTime = newTime - currentTime;
         currentTime = newTime;
         if (_gameOver) {
-           restart();
+            restart();
         }
         updateParticles();
 
@@ -274,13 +272,13 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         double getTime = System.currentTimeMillis();
 
         //update particles
-        if (getTime - timeLarge > 1000) {
+        if (getTime - timeLarge > GameConfig.ONE_SECOND) {
             _largeParticles.clear();
         }
-        if (getTime - timeMedium > 1000) {
+        if (getTime - timeMedium > GameConfig.ONE_SECOND) {
             _mediumParticles.clear();
         }
-        if (getTime - timeSmall > 1000) {
+        if (getTime - timeSmall > GameConfig.ONE_SECOND) {
             _smallParticles.clear();
         }
     }
@@ -288,19 +286,19 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
     private void renderParticles() {
         //render particles
         double getTime = System.currentTimeMillis();
-        if (getTime - timeLarge < 1000) {
+        if (getTime - timeLarge < GameConfig.ONE_SECOND) {
             for (final Particles particles : _largeParticles) {
                 particles.render(_viewportMatrix);
             }
 
         }
-        if (getTime - timeMedium < 1000) {
+        if (getTime - timeMedium < GameConfig.ONE_SECOND) {
             for (final Particles particles : _mediumParticles) {
                 particles.render(_viewportMatrix);
             }
 
         }
-        if (getTime - timeSmall < 1000) {
+        if (getTime - timeSmall < GameConfig.ONE_SECOND) {
             for (final Particles particles : _smallParticles) {
                 particles.render(_viewportMatrix);
             }
@@ -317,6 +315,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         }
 
     }
+
     private void restart() {
         spawnPlayerAndAsteroids();
         _player.respawn();
@@ -324,8 +323,6 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         _jukebox.play(GameConfig.START_GAME);
         _gameOver = false;
     }
-
-
 
 
     public void setControls(final InputManager input) {
@@ -363,7 +360,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
                     }
                     b.onCollision(a); //notify each entity so they can decide what to do
                     a.onCollision(b);
-                    b._ttl = 0; //kill bullet if colliding with asteroid, timetolive = 0;
+                    b._ttl = GameConfig.BULLET_DEAD; //kill bullet if colliding with asteroid, timetolive = 0;
                 }
             }
             for (final Asteroid a : _shatteredAsteroids) {
@@ -374,7 +371,7 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
                     }
                     b.onCollision(a); //notify each entity so they can decide what to do
                     a.onCollision(b);
-                    b._ttl = 0; //kill bullet if colliding with asteroid, timetolive = 0;
+                    b._ttl = GameConfig.BULLET_DEAD; //kill bullet if colliding with asteroid, timetolive = 0;
                 }
             }
         }
@@ -460,9 +457,9 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         }
         int i = 0;
         //Spawn 3 smaller asteroids
-        while (i < 3) {
+        while (i < GameConfig.SMALLER_ASTEROIDS_COUNT) {
             try {
-                _shatteredAsteroidsToAdd.add(new Asteroid(a._x, a._y, r.nextInt((maxAsteroid - minAsteroid) + 1) + minAsteroid));
+                _shatteredAsteroidsToAdd.add(new Asteroid(a._x, a._y, r.nextInt((GameConfig.MAX_ASTEROID_POINTS - GameConfig.MIN_ASTEROID_POINTS) + 1) + GameConfig.MIN_ASTEROID_POINTS));
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -482,9 +479,9 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         }
         int i = 0;
         //spawn 3 medium-sized asteroids
-        while (i < 3) {
+        while (i < GameConfig.SMALLER_ASTEROIDS_COUNT) {
             try {
-                _shatteredAsteroidsToAdd.add(new Asteroid(a._x, a._y, r.nextInt((maxAsteroid - minAsteroid) + 1) + minAsteroid));
+                _shatteredAsteroidsToAdd.add(new Asteroid(a._x, a._y, r.nextInt((GameConfig.MAX_ASTEROID_POINTS - GameConfig.MIN_ASTEROID_POINTS) + 1) + GameConfig.MIN_ASTEROID_POINTS));
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -506,11 +503,11 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         //todo: resume GLSurfaceView/onWindowFocusChanged?
     }
 
-   public void onPause() {
+    public void onPause() {
         Log.d(TAG, "onPause");
         _inputs.onPause();
         _backgroundMusic.onPause();
-       //todo: pause GLSurfaceView
+        //todo: pause GLSurfaceView
 
     }
 
@@ -522,9 +519,6 @@ public class Game extends GLSurfaceView implements GLSurfaceView.Renderer {
         _inputs = null;
         GLEntity._game = null;
     }
-
-
-
 
 
 }

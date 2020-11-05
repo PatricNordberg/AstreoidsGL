@@ -18,7 +18,7 @@ public class Player extends GLEntity {
 
     private static final String TAG = "Player";
     final Random r = new Random();
-    public int _score;
+    public int _score = 0;
     private float _bulletCooldown = 0;
     private float _hyperspaceCooldown = 0;
     private float _boostCooldown = 0;
