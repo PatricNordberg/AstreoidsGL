@@ -13,21 +13,11 @@ public class GameConfig {
     static final int ONE_SECOND = 1000;
     //Asteroid
     public static final int ASTEROID_COUNT = 10;
-    public static final int SMALL_PARTICLE_COUNT = 20;
-    public static final int MEDIUM_PARTICLE_COUNT = 30;
-    public static final int LARGE_PARTICLE_COUNT = 40;
-    public static final int LARGE_ASTEROID_WIDTH = 12;
-    public static final int MEDIUM_ASTEROID_WIDTH = 8;
-    public static final int SMALL_ASTEROID_WIDTH = 4;
-    public static final int LARGE_ASTEROID_MIN_VEL = 1;
-    public static final int LARGE_ASTEROID_MAX_VEL = 2;
-    public static final int MEDIUM_ASTEROID_MIN_VEL = 2;
-    public static final int MEDIUM_ASTEROID_MAX_VEL = 3;
-    public static final int SMALL_ASTEROID_MIN_VEL = 3;
-    public static final int SMALL_ASTEROID_MAX_VEL = 4;
     final static int MIN_ASTEROID_POINTS = 3;
     final static int MAX_ASTEROID_POINTS = 11;
-    final static int SMALLER_ASTEROIDS_COUNT = 3;
+    final static int SMALLER_ASTEROIDS_COUNT = 4;
+    final static int MEDIUM_ASTEROIDS_COUNT = 4;
+    final static int LARGE_ASTEROIDS_COUNT = 3;
     //Bullet
     public static final float SPEED = 120f;
     public static final float TIME_TO_LIVE = 1.5f; //seconds
@@ -55,10 +45,10 @@ public class GameConfig {
     public static int BOOST = 0;
     public static int HYPERSPACE = 0;
     //Player
-    public static int STARTING_HEALTH = 3;
-    public static int STARTING_SCORE = 0;
-    public static float _playerHeight = 8f;
-    public static float _playerWidth = 4f;
+    public static final int STARTING_HEALTH = 3;
+    public static final int STARTING_SCORE = 0;
+    public static final float _playerHeight = 8f;
+    public static final float _playerWidth = 4f;
     //Particles
     public static final float PARTICLE_SIZE = 0.2f;
     public static final int PARTICLE_VEL_R_RANGE = 2;

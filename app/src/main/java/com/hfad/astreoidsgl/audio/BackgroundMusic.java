@@ -9,7 +9,6 @@ import com.hfad.astreoidsgl.GameConfig;
 public class BackgroundMusic {
     @SuppressWarnings("UnusedAssignment")
     Context _context = null;
-    @SuppressWarnings("FieldCanBeLocal")
     private MediaPlayer _mediaPlayer = null;
     private int length = 0;
 
